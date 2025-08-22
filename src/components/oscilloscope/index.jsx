@@ -1,18 +1,21 @@
 import { useEffect, useRef } from "react";
-import { analyser } from "../../synth/engine";
+import { useSynth } from "../../hooks/useSynth";
 
 export const Oscilloscope = () => {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
+    const synth = useSynth();
 
     useEffect(() => {
-        if (!canvasRef.current || !analyser) return;
+        if (!canvasRef.current) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
-        analyser.fftSize = 2048;
 
-        const bufferLength = analyser.fftSize;
+        const fftSize = 2048;
+        synth.setAnalyserFftSize(fftSize);
+
+        const bufferLength = fftSize;
         const dataArray = new Float32Array(bufferLength);
 
         const drawGrid = (ctx) => {
@@ -73,7 +76,7 @@ export const Oscilloscope = () => {
         const draw = () => {
             animationRef.current = requestAnimationFrame(draw);
 
-            analyser.getFloatTimeDomainData(dataArray);
+            synth.setAnalyserTimeDomainData(dataArray);
 
             ctx.fillStyle = "rgba(0,0,0,0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -87,7 +90,7 @@ export const Oscilloscope = () => {
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
         };
-    }, []);
+    }, [synth]);
 
     return (
         <canvas

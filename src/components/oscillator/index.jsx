@@ -1,23 +1,25 @@
 import { useState, useEffect } from "react";
 import { FormControl, InputLabel, MenuItem, Select, Slider, Typography } from "@mui/material";
-import * as Engine from "../../synth/engine";
+import { useSynth } from "../../hooks/useSynth";
 
 export const Oscillator = ({ id }) => {
     const [waveform, setWaveform] = useState("triangle");
     const [level, setLevel] = useState(25);
     const [detune, setDetune] = useState(0);
 
-    useEffect(() => {
-        Engine.setWaveform(id, waveform);
-    }, [id, waveform]);
+    const synth = useSynth();
 
     useEffect(() => {
-        Engine.setLevel(id, level / 100);
-    }, [id, level]);
+        synth.setWaveform(id, waveform);
+    }, [synth, id, waveform]);
 
     useEffect(() => {
-        Engine.setDetune(id, detune);
-    }, [id, detune]);
+        synth.setLevel(id, level / 100);
+    }, [synth, id, level]);
+
+    useEffect(() => {
+        synth.setDetune(id, detune);
+    }, [synth, id, detune]);
 
     return (
         <div className="w-80">

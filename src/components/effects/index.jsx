@@ -1,14 +1,15 @@
 import { Slider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import * as Engine from "../../synth/engine";
+import { useSynth } from "../../hooks/useSynth";
 
 export const Effects = () => {
     const [reverbDry, setReverbDry] = useState(1);
     const [reverbWet, setReverbWet] = useState(0);
+    const synth = useSynth();
 
     useEffect(() => {
-        Engine.setReverbMix(reverbDry, reverbWet);
-    }, [reverbDry, reverbWet]);
+        synth.setReverbMix(reverbDry, reverbWet);
+    }, [synth, reverbDry, reverbWet]);
 
     return (
         <div className="w-120">

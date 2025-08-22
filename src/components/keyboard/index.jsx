@@ -2,15 +2,16 @@ import { useKeyboard } from "../../hooks/useKeyboard";
 import { getKeyFrequency, keyMidiMap } from "../../synth/keyboardMap";
 import { Button, Typography } from "@mui/material";
 import { useState } from "react";
-import * as Engine from "../../synth/engine";
+import { useSynth } from "../../hooks/useSynth";
 
 export const Keyboard = () => {
     const [activeVoices, setActiveVoices] = useState({});
+    const synth = useSynth();
 
     const onKeyDown = (key) => {
         const frequency = getKeyFrequency(key);
         if (frequency && !activeVoices[key]) {
-            const voiceId = Engine.playNote(frequency);
+            const voiceId = synth.playNote(frequency);
             setActiveVoices((prev) => ({ ...prev, [key]: voiceId }));
         }
     };
@@ -18,7 +19,7 @@ export const Keyboard = () => {
     const onKeyUp = (key) => {
         const voiceId = activeVoices[key];
         if (voiceId !== undefined) {
-            Engine.stopNote(voiceId);
+            synth.stopNote(voiceId);
             setActiveVoices((prev) => {
                 const copy = { ...prev };
                 delete copy[key];

@@ -1,18 +1,19 @@
 import { Slider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import * as Engine from "../../synth/engine";
+import { useSynth } from "../../hooks/useSynth";
 
 export const LowPassFilter = () => {
     const [cutoff, setCutoff] = useState(20000);
     const [quality, setQuality] = useState(1);
+    const synth = useSynth();
 
     useEffect(() => {
-        Engine.setLPFCutoff(cutoff);
-    }, [cutoff]);
+        synth.setLPFCutoff(cutoff);
+    }, [synth, cutoff]);
 
     useEffect(() => {
-        Engine.setLPFQuality(quality);
-    }, [quality]);
+        synth.setLPFQuality(quality);
+    }, [synth, quality]);
 
     return (
         <div className="">
