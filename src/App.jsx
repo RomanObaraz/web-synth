@@ -2,7 +2,7 @@ import { Oscillator } from "./components/oscillator";
 import { Keyboard } from "./components/keyboard";
 import { Oscilloscope } from "./components/oscilloscope";
 import { LowPassFilter } from "./components/lowPassFilter";
-import { Effects } from "./components/effects";
+import { Reverb } from "./components/reverb";
 import { Toggleable } from "./components/toggleable";
 import { SynthProvider } from "./synthProvider/synthProvider";
 
@@ -20,13 +20,15 @@ function App() {
                 </div>
 
                 <div className="self-center w-120">
-                    <Toggleable label="LPF">
+                    <Toggleable moduleId="lpf" label="LPF">
                         <LowPassFilter />
                     </Toggleable>
                 </div>
 
-                <div className="self-center">
-                    <Effects />
+                <div className="self-center w-120">
+                    <Toggleable moduleId="reverb" label="Reverb">
+                        <Reverb />
+                    </Toggleable>
                 </div>
 
                 <Keyboard />

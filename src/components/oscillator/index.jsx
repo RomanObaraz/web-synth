@@ -7,7 +7,7 @@ export const Oscillator = ({ id }) => {
     const [level, setLevel] = useState(25);
     const [detune, setDetune] = useState(0);
 
-    const synth = useSynth();
+    const { synth } = useSynth();
 
     useEffect(() => {
         synth.setWaveform(id, waveform);

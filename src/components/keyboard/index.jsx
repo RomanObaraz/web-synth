@@ -6,7 +6,7 @@ import { useSynth } from "../../hooks/useSynth";
 
 export const Keyboard = () => {
     const [activeVoices, setActiveVoices] = useState({});
-    const synth = useSynth();
+    const { synth } = useSynth();
 
     const onKeyDown = (key) => {
         const frequency = getKeyFrequency(key);

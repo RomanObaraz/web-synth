@@ -1,8 +1,15 @@
 import { Card, CardContent, Switch, Typography } from "@mui/material";
 import { useState } from "react";
+import { useSynth } from "../hooks/useSynth";
 
-export const Toggleable = ({ label, children }) => {
+export const Toggleable = ({ moduleId, label, children }) => {
     const [enabled, setEnabled] = useState(true);
+    const { setBypass } = useSynth();
+
+    const handleToggle = (on) => {
+        setEnabled(on);
+        setBypass(moduleId, !on);
+    };
 
     return (
         <Card className="p-4" variant="outlined">
@@ -11,7 +18,7 @@ export const Toggleable = ({ label, children }) => {
                     <Typography>{label}</Typography>
                 </div>
                 <div className="absolute right-0">
-                    <Switch checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+                    <Switch checked={enabled} onChange={(e) => handleToggle(e.target.checked)} />
                 </div>
             </div>
             <CardContent

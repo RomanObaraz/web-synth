@@ -4,7 +4,7 @@ import { useSynth } from "../../hooks/useSynth";
 export const Oscilloscope = () => {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
-    const synth = useSynth();
+    const { synth } = useSynth();
 
     useEffect(() => {
         if (!canvasRef.current) return;

@@ -5,7 +5,7 @@ import { useSynth } from "../../hooks/useSynth";
 export const LowPassFilter = () => {
     const [cutoff, setCutoff] = useState(20000);
     const [quality, setQuality] = useState(1);
-    const synth = useSynth();
+    const { synth } = useSynth();
 
     useEffect(() => {
         synth.setLPFCutoff(cutoff);
@@ -16,7 +16,7 @@ export const LowPassFilter = () => {
     }, [synth, quality]);
 
     return (
-        <div className="">
+        <div>
             <Typography>Cutoff: {cutoff}</Typography>
             <Slider
                 value={cutoff}
