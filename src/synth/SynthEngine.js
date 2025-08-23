@@ -1,11 +1,10 @@
 import { LPFModule } from "./modules/LPFModule";
 import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
+import { setSmoothLevel } from "./utils";
 
 // TODO: review playNote() and stopNote() if we can move something to OscillatorModule
 // TODO: review the setters if we can move something to OscillatorModule
-// TODO: look to commented disconnects in stopNote() after implementing bypass switch
-// TODO: they produce clipping sound
 // TODO: can we organize setters better?
 
 export class SynthEngine {
@@ -26,8 +25,6 @@ export class SynthEngine {
         this.activeVoices = new Map();
 
         // connection chain
-        // this.osc1.output.connect(this.lpf.input);
-        // this.osc2.output.connect(this.lpf.input);
         this.lpf.output.connect(this.reverb.input);
         this.reverb.output.connect(this.analyser);
         this.analyser.connect(this.masterGain);
@@ -58,16 +55,11 @@ export class SynthEngine {
         const voice = this.activeVoices.get(voiceId);
         if (!voice) return;
 
-        voice.voiceGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
-        voice.voiceGain.gain.setValueAtTime(voice.voiceGain.gain.value, this.audioCtx.currentTime);
-        voice.voiceGain.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime + 0.03);
+        setSmoothLevel(voice.voiceGain.gain, this.audioCtx.currentTime, 0);
 
         voice.oscs.forEach((osc) => {
             osc.osc.stop(this.audioCtx.currentTime + 0.05);
-            // osc.osc.disconnect();
         });
-
-        // voice.voiceGain.disconnect();
 
         this.activeVoices.delete(voiceId);
     }
@@ -88,7 +80,7 @@ export class SynthEngine {
         this.oscillators[oscIndex].setLevel(level);
 
         for (const { oscs } of this.activeVoices.values()) {
-            oscs[oscIndex].gain.gain.setValueAtTime(level, this.audioCtx.currentTime);
+            setSmoothLevel(oscs[oscIndex].gain.gain, this.audioCtx.currentTime, level);
         }
     }
 
@@ -100,23 +92,41 @@ export class SynthEngine {
         }
     }
 
-    setAnalyserFftSize(fftSize) {
-        this.analyser.fftSize = fftSize;
+    setBypass(moduleId, bypass) {
+        if (moduleId.startsWith("osc-")) {
+            const oscIndex = parseInt(moduleId.split("-")[1], 10);
+
+            this.oscillators[oscIndex].toggleBypass(bypass);
+
+            for (const { oscs } of this.activeVoices.values()) {
+                setSmoothLevel(
+                    oscs[oscIndex].gain.gain,
+                    this.audioCtx.currentTime,
+                    bypass ? 0 : this.oscillators[oscIndex].level
+                );
+            }
+        } else {
+            this[moduleId].toggleBypass(bypass);
+        }
     }
 
-    setAnalyserTimeDomainData(dataArray) {
-        this.analyser.getFloatTimeDomainData(dataArray);
-    }
+    // setAnalyserFftSize(fftSize) {
+    //     this.analyser.fftSize = fftSize;
+    // }
 
-    setLPFCutoff(cutoff) {
-        this.lpf.setCutoff(cutoff);
-    }
+    // setAnalyserTimeDomainData(dataArray) {
+    //     this.analyser.getFloatTimeDomainData(dataArray);
+    // }
 
-    setLPFQuality(Q) {
-        this.lpf.setQ(Q);
-    }
+    // setLPFCutoff(cutoff) {
+    //     this.lpf.setCutoff(cutoff);
+    // }
 
-    setReverbMix(dry, wet) {
-        this.reverb.setDryWet(dry, wet);
-    }
+    // setLPFQuality(Q) {
+    //     this.lpf.setQ(Q);
+    // }
+
+    // setReverbMix(dry, wet) {
+    //     this.reverb.setDryWet(dry, wet);
+    // }
 }

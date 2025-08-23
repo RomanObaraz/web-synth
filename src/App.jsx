@@ -15,8 +15,16 @@ function App() {
                 </div>
 
                 <div className="flex justify-center gap-10">
-                    <Oscillator id={0} />
-                    <Oscillator id={1} />
+                    <div className="w-80">
+                        <Toggleable moduleId="osc-0" label="OSC-1">
+                            <Oscillator id={0} />
+                        </Toggleable>
+                    </div>
+                    <div className="w-80">
+                        <Toggleable moduleId="osc-1" label="OSC-2">
+                            <Oscillator id={1} />
+                        </Toggleable>
+                    </div>
                 </div>
 
                 <div className="self-center w-120">

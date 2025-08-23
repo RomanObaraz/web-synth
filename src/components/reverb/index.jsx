@@ -8,7 +8,7 @@ export const Reverb = () => {
     const { synth } = useSynth();
 
     useEffect(() => {
-        synth.setReverbMix(dry, wet);
+        synth.reverb.setDryWet(dry, wet);
     }, [synth, dry, wet]);
 
     return (

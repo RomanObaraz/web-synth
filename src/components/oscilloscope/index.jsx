@@ -13,7 +13,7 @@ export const Oscilloscope = () => {
         const ctx = canvas.getContext("2d");
 
         const fftSize = 2048;
-        synth.setAnalyserFftSize(fftSize);
+        synth.analyser.fftSize = fftSize;
 
         const bufferLength = fftSize;
         const dataArray = new Float32Array(bufferLength);
@@ -76,7 +76,7 @@ export const Oscilloscope = () => {
         const draw = () => {
             animationRef.current = requestAnimationFrame(draw);
 
-            synth.setAnalyserTimeDomainData(dataArray);
+            synth.analyser.getFloatTimeDomainData(dataArray);
 
             ctx.fillStyle = "rgba(0,0,0,0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);

@@ -8,11 +8,11 @@ export const LowPassFilter = () => {
     const { synth } = useSynth();
 
     useEffect(() => {
-        synth.setLPFCutoff(cutoff);
+        synth.lpf.setCutoff(cutoff);
     }, [synth, cutoff]);
 
     useEffect(() => {
-        synth.setLPFQuality(quality);
+        synth.lpf.setQ(quality);
     }, [synth, quality]);
 
     return (

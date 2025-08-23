@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from "react";
-import { SynthContext } from "./synthContext";
 import { SynthEngine } from "../synth/SynthEngine";
+import { SynthContext } from "./synthContext";
 
 export function SynthProvider({ children }) {
     const synth = useMemo(() => new SynthEngine(), []);
 
     const setBypass = useCallback(
         (moduleId, bypass) => {
-            synth[moduleId].toggleBypass(bypass);
+            synth.setBypass(moduleId, bypass);
         },
         [synth]
     );
