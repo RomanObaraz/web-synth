@@ -5,6 +5,7 @@ import { LowPassFilter } from "./components/lowPassFilter";
 import { Reverb } from "./components/reverb";
 import { Toggleable } from "./components/toggleable";
 import { SynthProvider } from "./synthProvider/synthProvider";
+import { Distortion } from "./components/distortion";
 
 function App() {
     return (
@@ -33,10 +34,14 @@ function App() {
                             <LowPassFilter />
                         </Toggleable>
                     </div>
-
                     <div className="self-center w-120">
                         <Toggleable moduleId="reverb" label="Reverb">
                             <Reverb />
+                        </Toggleable>
+                    </div>
+                    <div className="self-center w-120">
+                        <Toggleable moduleId="distortion" label="Distortion">
+                            <Distortion />
                         </Toggleable>
                     </div>
                 </div>

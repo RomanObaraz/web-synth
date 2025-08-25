@@ -1,7 +1,10 @@
+import { DistortionModule } from "./modules/DistortionModule";
 import { LPFModule } from "./modules/LPFModule";
 import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
+
+// TODO: make parent class for modules?
 
 export class SynthEngine {
     constructor() {
@@ -19,9 +22,11 @@ export class SynthEngine {
         ];
         this.lpf = new LPFModule(this.audioCtx);
         this.reverb = new ReverbModule(this.audioCtx);
+        this.distortion = new DistortionModule(this.audioCtx);
 
         // connection chain
-        this.lpf.output.connect(this.reverb.input);
+        this.lpf.output.connect(this.distortion.input);
+        this.distortion.output.connect(this.reverb.input);
         this.reverb.output.connect(this.analyser);
         this.analyser.connect(this.masterGain);
         this.masterGain.connect(this.audioCtx.destination);

@@ -61,7 +61,6 @@ export const Keyboard = () => {
                     );
                 })}
             </div>
-            <Typography gutterBottom>Keys pressed: {[...activeKeys].join(", ")}</Typography>
         </>
     );
 };
