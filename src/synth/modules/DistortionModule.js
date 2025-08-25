@@ -1,10 +1,7 @@
-export class DistortionModule {
-    constructor(audioCtx) {
-        this.audioCtx = audioCtx;
+import { BaseModule } from "./BaseModule";
 
-        this.input = audioCtx.createGain();
-        this.output = audioCtx.createGain();
-
+export class DistortionModule extends BaseModule {
+    initModule() {
         this.waveShaper = this.audioCtx.createWaveShaper();
         this.waveShaper.oversample = "4x";
         this.dryGain = this.audioCtx.createGain();
@@ -12,20 +9,11 @@ export class DistortionModule {
         this.setDrive(0);
         this.setMix(0);
         this.updateCurve();
-
-        this.enabled = true;
-        this.toggleBypass(false);
     }
 
-    setDrive(drive) {
-        this.drive = drive;
-        this.updateCurve();
-    }
-
-    setMix(mix) {
-        this.mix = mix;
-        this.dryGain.gain.setValueAtTime(1 - this.mix, this.audioCtx.currentTime);
-        this.wetGain.gain.setValueAtTime(this.mix, this.audioCtx.currentTime);
+    route() {
+        this.input.connect(this.dryGain).connect(this.output);
+        this.input.connect(this.waveShaper).connect(this.wetGain).connect(this.output);
     }
 
     updateCurve() {
@@ -39,17 +27,14 @@ export class DistortionModule {
         this.waveShaper.curve = curve;
     }
 
-    toggleBypass(on) {
-        this.enabled = !on;
-        if (on) {
-            // bypass
-            this.input.disconnect();
-            this.input.connect(this.output);
-        } else {
-            // full routing
-            this.input.disconnect();
-            this.input.connect(this.dryGain).connect(this.output);
-            this.input.connect(this.waveShaper).connect(this.wetGain).connect(this.output);
-        }
+    setDrive(drive) {
+        this.drive = drive;
+        this.updateCurve();
+    }
+
+    setMix(mix) {
+        this.mix = mix;
+        this.dryGain.gain.setValueAtTime(1 - this.mix, this.audioCtx.currentTime);
+        this.wetGain.gain.setValueAtTime(this.mix, this.audioCtx.currentTime);
     }
 }

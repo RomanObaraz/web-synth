@@ -1,20 +1,19 @@
-export class ReverbModule {
-    constructor(audioCtx) {
-        this.audioCtx = audioCtx;
+import { BaseModule } from "./BaseModule";
 
-        this.input = audioCtx.createGain();
-        this.output = audioCtx.createGain();
-
-        this.convolver = audioCtx.createConvolver();
-        this.wet = audioCtx.createGain();
-        this.dry = audioCtx.createGain();
+export class ReverbModule extends BaseModule {
+    initModule() {
+        this.convolver = this.audioCtx.createConvolver();
+        this.wet = this.audioCtx.createGain();
+        this.dry = this.audioCtx.createGain();
 
         this.loadImpulse();
 
         this.setDryWet(1, 0);
+    }
 
-        this.enabled = true;
-        this.toggleBypass(false);
+    route() {
+        this.input.connect(this.dry).connect(this.output);
+        this.input.connect(this.convolver).connect(this.wet).connect(this.output);
     }
 
     async loadImpulse() {
@@ -40,19 +39,5 @@ export class ReverbModule {
     setDryWet(dry, wet) {
         this.dry.gain.setValueAtTime(dry, this.audioCtx.currentTime);
         this.wet.gain.setValueAtTime(wet, this.audioCtx.currentTime);
-    }
-
-    toggleBypass(on) {
-        this.enabled = !on;
-        if (on) {
-            // bypass
-            this.input.disconnect();
-            this.input.connect(this.output);
-        } else {
-            // full routing
-            this.input.disconnect();
-            this.input.connect(this.dry).connect(this.output);
-            this.input.connect(this.convolver).connect(this.wet).connect(this.output);
-        }
     }
 }

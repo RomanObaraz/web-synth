@@ -4,8 +4,6 @@ import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 
-// TODO: make parent class for modules?
-
 export class SynthEngine {
     constructor() {
         this.audioCtx = new AudioContext();

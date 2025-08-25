@@ -4,7 +4,7 @@ import { useSynth } from "../../hooks/useSynth";
 
 export const LowPassFilter = () => {
     const [cutoff, setCutoff] = useState(20000);
-    const [quality, setQuality] = useState(1);
+    const [resonance, setResonance] = useState(1);
     const { synth } = useSynth();
 
     useEffect(() => {
@@ -12,8 +12,8 @@ export const LowPassFilter = () => {
     }, [synth, cutoff]);
 
     useEffect(() => {
-        synth.lpf.setQ(quality);
-    }, [synth, quality]);
+        synth.lpf.setResonance(resonance);
+    }, [synth, resonance]);
 
     return (
         <div>
@@ -25,13 +25,13 @@ export const LowPassFilter = () => {
                 step={1}
                 onChange={(e) => setCutoff(e.target.value)}
             />
-            <Typography>Quality: {quality}</Typography>
+            <Typography>Resonance: {resonance}</Typography>
             <Slider
-                value={quality}
+                value={resonance}
                 min={0.1}
                 max={20}
                 step={0.1}
-                onChange={(e) => setQuality(e.target.value)}
+                onChange={(e) => setResonance(e.target.value)}
             />
         </div>
     );

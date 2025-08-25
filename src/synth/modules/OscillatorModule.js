@@ -1,13 +1,14 @@
-export class OscillatorModule {
-    constructor(audioCtx) {
+import { BaseModule } from "./BaseModule";
+
+export class OscillatorModule extends BaseModule {
+    initAudio(audioCtx) {
         this.audioCtx = audioCtx;
+    }
 
+    initModule() {
         this.waveform = "triangle";
-        this.level = 1;
-        this.detune = 0;
-
-        this.enabled = true;
-        this.toggleBypass(false);
+        this.setLevel(1);
+        this.setDetune(0);
     }
 
     createOscillator(frequency) {
