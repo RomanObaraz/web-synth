@@ -3,16 +3,14 @@ import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 
-// TODO: review playNote() and stopNote() if we can move something to OscillatorModule
-// TODO: review the setters if we can move something to OscillatorModule
-// TODO: can we organize setters better?
-
 export class SynthEngine {
     constructor() {
         this.audioCtx = new AudioContext();
 
         this.masterGain = this.audioCtx.createGain();
         this.analyser = this.audioCtx.createAnalyser();
+
+        this.activeVoices = new Map();
 
         // modules
         this.oscillators = [
@@ -21,8 +19,6 @@ export class SynthEngine {
         ];
         this.lpf = new LPFModule(this.audioCtx);
         this.reverb = new ReverbModule(this.audioCtx);
-
-        this.activeVoices = new Map();
 
         // connection chain
         this.lpf.output.connect(this.reverb.input);
@@ -109,24 +105,4 @@ export class SynthEngine {
             this[moduleId].toggleBypass(bypass);
         }
     }
-
-    // setAnalyserFftSize(fftSize) {
-    //     this.analyser.fftSize = fftSize;
-    // }
-
-    // setAnalyserTimeDomainData(dataArray) {
-    //     this.analyser.getFloatTimeDomainData(dataArray);
-    // }
-
-    // setLPFCutoff(cutoff) {
-    //     this.lpf.setCutoff(cutoff);
-    // }
-
-    // setLPFQuality(Q) {
-    //     this.lpf.setQ(Q);
-    // }
-
-    // setReverbMix(dry, wet) {
-    //     this.reverb.setDryWet(dry, wet);
-    // }
 }

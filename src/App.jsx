@@ -27,16 +27,18 @@ function App() {
                     </div>
                 </div>
 
-                <div className="self-center w-120">
-                    <Toggleable moduleId="lpf" label="LPF">
-                        <LowPassFilter />
-                    </Toggleable>
-                </div>
+                <div className="flex justify-center gap-10">
+                    <div className="self-center w-120">
+                        <Toggleable moduleId="lpf" label="LPF">
+                            <LowPassFilter />
+                        </Toggleable>
+                    </div>
 
-                <div className="self-center w-120">
-                    <Toggleable moduleId="reverb" label="Reverb">
-                        <Reverb />
-                    </Toggleable>
+                    <div className="self-center w-120">
+                        <Toggleable moduleId="reverb" label="Reverb">
+                            <Reverb />
+                        </Toggleable>
+                    </div>
                 </div>
 
                 <Keyboard />
