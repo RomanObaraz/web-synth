@@ -6,6 +6,7 @@ import { Reverb } from "./components/reverb";
 import { Toggleable } from "./components/toggleable";
 import { SynthProvider } from "./synthProvider/synthProvider";
 import { Distortion } from "./components/distortion";
+import { AmpEnvelope } from "./components/ampEnvelope";
 
 function App() {
     return (
@@ -24,6 +25,11 @@ function App() {
                     <div className="w-80">
                         <Toggleable moduleId="osc-1" label="OSC-2">
                             <Oscillator id={1} />
+                        </Toggleable>
+                    </div>
+                    <div className="w-80">
+                        <Toggleable moduleId="ampEnvelope" label="Amp Envelope">
+                            <AmpEnvelope />
                         </Toggleable>
                     </div>
                 </div>

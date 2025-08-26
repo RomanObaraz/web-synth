@@ -1,3 +1,4 @@
+import { Envelope } from "./Envelope";
 import { DistortionModule } from "./modules/DistortionModule";
 import { LPFModule } from "./modules/LPFModule";
 import { OscillatorModule } from "./modules/OscillatorModule";
@@ -10,6 +11,13 @@ export class SynthEngine {
 
         this.masterGain = this.audioCtx.createGain();
         this.analyser = this.audioCtx.createAnalyser();
+
+        this.envelopeADSR = {
+            attack: 0,
+            decay: 0,
+            sustain: 1,
+            release: 0,
+        };
 
         this.activeVoices = new Map();
 
@@ -32,7 +40,6 @@ export class SynthEngine {
 
     playNote(frequency) {
         const voiceGain = this.audioCtx.createGain();
-        voiceGain.gain.setValueAtTime(1, this.audioCtx.currentTime);
         voiceGain.connect(this.lpf.input);
 
         const oscs = [];
@@ -45,8 +52,12 @@ export class SynthEngine {
             }
         });
 
+        const envelope = new Envelope(this.audioCtx, this.envelopeADSR);
+        envelope.attachParameter(voiceGain.gain);
+        envelope.triggerAttack();
+
         const voiceId = Symbol();
-        this.activeVoices.set(voiceId, { oscs, voiceGain });
+        this.activeVoices.set(voiceId, { oscs, voiceGain, envelope });
         return voiceId;
     }
 
@@ -54,10 +65,10 @@ export class SynthEngine {
         const voice = this.activeVoices.get(voiceId);
         if (!voice) return;
 
-        setSmoothLevel(voice.voiceGain.gain, this.audioCtx.currentTime, 0);
+        voice.envelope.triggerRelease();
 
         voice.oscs.forEach((osc) => {
-            osc.osc.stop(this.audioCtx.currentTime + 0.05);
+            osc.osc.stop(this.audioCtx.currentTime + voice.envelope.release + 0.05);
         });
 
         this.activeVoices.delete(voiceId);
@@ -89,6 +100,14 @@ export class SynthEngine {
         for (const { oscs } of this.activeVoices.values()) {
             oscs[oscIndex].osc.detune.setValueAtTime(detune, this.audioCtx.currentTime);
         }
+    }
+
+    setEnvelopeADSR(adsr) {
+        this.envelopeADSR = { ...this.envelopeADSR, ...adsr };
+
+        this.activeVoices.forEach((voice) => {
+            if (voice.envelope) voice.envelope.setADSR(adsr);
+        });
     }
 
     setBypass(moduleId, bypass) {
