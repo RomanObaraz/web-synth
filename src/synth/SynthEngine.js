@@ -42,8 +42,6 @@ export class SynthEngine {
         this.masterGain.connect(this.audioCtx.destination);
     }
 
-    // TODO: there's a clipping sound on retrigger
-
     playNote(frequency) {
         const voiceGain = this.audioCtx.createGain();
         voiceGain.connect(this.lpf.input);

@@ -23,14 +23,14 @@ export class Envelope {
 
         const now = this.audioCtx.currentTime;
         this.parameter.cancelScheduledValues(now);
-        console.log(this.parameter.value);
-        this.parameter.setValueAtTime(0, now);
+        this.parameter.setValueAtTime(this.parameter.value, now);
 
         // attack
-        this.parameter.linearRampToValueAtTime(1, now + this.attack);
+        const attackTime = Math.max(this.attack, 0.001);
+        this.parameter.linearRampToValueAtTime(1, now + attackTime);
 
         // decay to sustain
-        this.parameter.linearRampToValueAtTime(this.sustain, now + this.attack + this.decay);
+        this.parameter.linearRampToValueAtTime(this.sustain, now + attackTime + this.decay);
     }
 
     triggerRelease() {
