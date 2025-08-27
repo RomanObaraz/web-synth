@@ -5,6 +5,8 @@ import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 
+// TODO: Voice as a separate class?
+
 export class SynthEngine {
     constructor() {
         this.audioCtx = new AudioContext();
@@ -18,6 +20,8 @@ export class SynthEngine {
             sustain: 1,
             release: 0,
         };
+
+        this.voiceMode = "polyphonic";
 
         this.activeVoices = new Map();
 
@@ -38,10 +42,34 @@ export class SynthEngine {
         this.masterGain.connect(this.audioCtx.destination);
     }
 
+    // TODO: there's a clipping sound on retrigger
+
     playNote(frequency) {
         const voiceGain = this.audioCtx.createGain();
         voiceGain.connect(this.lpf.input);
 
+        // retrigger voice mode
+        if (this.voiceMode === "retrigger") {
+            const existingVoice = [...this.activeVoices].find(
+                ([, value]) => value.frequency === frequency
+            );
+
+            if (existingVoice) {
+                const voiceId = existingVoice[0];
+                const voiceValue = existingVoice[1];
+
+                // cancel scheduled cleanup
+                if (voiceValue.cleanupTimeout) {
+                    clearTimeout(voiceValue.cleanupTimeout);
+                    voiceValue.cleanupTimeout = null;
+                }
+
+                voiceValue.envelope.triggerAttack();
+                return voiceId;
+            }
+        }
+
+        // polyphonic voice mode
         const oscs = [];
         this.oscillators.forEach((oscillator) => {
             const osc = oscillator.createOscillator(frequency);
@@ -57,7 +85,7 @@ export class SynthEngine {
         envelope.triggerAttack();
 
         const voiceId = Symbol();
-        this.activeVoices.set(voiceId, { oscs, voiceGain, envelope });
+        this.activeVoices.set(voiceId, { oscs, voiceGain, envelope, frequency });
         return voiceId;
     }
 
@@ -67,11 +95,14 @@ export class SynthEngine {
 
         voice.envelope.triggerRelease();
 
-        voice.oscs.forEach((osc) => {
-            osc.osc.stop(this.audioCtx.currentTime + voice.envelope.release + 0.05);
-        });
-
-        this.activeVoices.delete(voiceId);
+        voice.cleanupTimeout = setTimeout(() => {
+            // if the voice is still in activeVoices (wasn't retriggered),
+            // then kill it
+            if (this.activeVoices.has(voiceId)) {
+                voice.oscs.forEach((osc) => osc.osc.stop());
+                this.activeVoices.delete(voiceId);
+            }
+        }, voice.envelope.release * 1000);
     }
 
     /*
@@ -108,6 +139,14 @@ export class SynthEngine {
         this.activeVoices.forEach((voice) => {
             if (voice.envelope) voice.envelope.setADSR(adsr);
         });
+    }
+
+    setVoiceMode(voiceMode) {
+        if (voiceMode === "retrigger") {
+            this.voiceMode = voiceMode;
+        } else {
+            this.voiceMode = "polyphonic";
+        }
     }
 
     setBypass(moduleId, bypass) {

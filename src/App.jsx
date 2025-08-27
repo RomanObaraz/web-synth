@@ -27,7 +27,7 @@ function App() {
                             <Oscillator id={1} />
                         </Toggleable>
                     </div>
-                    <div className="w-80">
+                    <div className="w-100">
                         <Toggleable moduleId="ampEnvelope" label="Amp Envelope">
                             <AmpEnvelope />
                         </Toggleable>
