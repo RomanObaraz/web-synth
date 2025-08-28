@@ -7,8 +7,8 @@ export class Envelope {
         this.sustain = sustain;
         this.release = release;
 
-        // AudioParam controlled by this envelope
-        this.parameter = null;
+        this.parameter = null; // AudioParam controlled by this envelope
+        this._min = 0.001; // floor for exponential ramps
     }
 
     attachParameter(audioParam) {
@@ -21,14 +21,26 @@ export class Envelope {
 
         const now = this.audioCtx.currentTime;
         this.parameter.cancelScheduledValues(now);
-        this.parameter.setValueAtTime(isRetrigger ? this.parameter.value : 0, now);
+
+        this.parameter.setValueAtTime(
+            Math.max(isRetrigger ? this.parameter.value : 0, this._min),
+            now
+        );
 
         // attack
-        const attackTime = Math.max(this.attack, 0.001);
-        this.parameter.linearRampToValueAtTime(1, now + attackTime);
+        if (this.attack <= 0) {
+            this.parameter.setValueAtTime(1, now);
+        } else {
+            this.parameter.exponentialRampToValueAtTime(1, now + this.attack);
+        }
 
         // decay to sustain
-        this.parameter.linearRampToValueAtTime(this.sustain, now + attackTime + this.decay);
+        const sustain = Math.max(this.sustain, this._min);
+        if (this.decay > 0) {
+            this.parameter.exponentialRampToValueAtTime(sustain, now + this.attack + this.decay);
+        } else {
+            this.parameter.setValueAtTime(sustain, now + this.attack);
+        }
     }
 
     triggerRelease() {
@@ -36,10 +48,14 @@ export class Envelope {
 
         const now = this.audioCtx.currentTime;
         this.parameter.cancelScheduledValues(now);
-        this.parameter.setValueAtTime(this.parameter.value, now);
+        this.parameter.setValueAtTime(Math.max(this.parameter.value, this._min), now);
 
         // release
-        this.parameter.linearRampToValueAtTime(0, now + this.release);
+        if (this.release > 0) {
+            this.parameter.exponentialRampToValueAtTime(this._min, now + this.release);
+        } else {
+            this.parameter.setValueAtTime(this._min, now);
+        }
     }
 
     setADSR({ attack, decay, sustain, release }) {
