@@ -16,14 +16,12 @@ export class Envelope {
         this.parameter.setValueAtTime(0, this.audioCtx.currentTime);
     }
 
-    // TODO: do we want exponential ramp instead of linear?
-
-    triggerAttack() {
+    triggerAttack(isRetrigger = false) {
         if (!this.parameter) return;
 
         const now = this.audioCtx.currentTime;
         this.parameter.cancelScheduledValues(now);
-        this.parameter.setValueAtTime(this.parameter.value, now);
+        this.parameter.setValueAtTime(isRetrigger ? this.parameter.value : 0, now);
 
         // attack
         const attackTime = Math.max(this.attack, 0.001);

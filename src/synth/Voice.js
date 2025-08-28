@@ -20,7 +20,7 @@ export class Voice {
         // envelope
         this.envelope = new Envelope(audioCtx, envelopeADSR);
         this.envelope.attachParameter(this.voiceGain.gain);
-        this.envelope.triggerAttack();
+        this.triggerAttack();
 
         this.cleanupTimeout = null;
     }
@@ -31,11 +31,11 @@ export class Voice {
             this.cleanupTimeout = null;
         }
 
-        this.triggerAttack();
+        this.triggerAttack(true);
     }
 
-    triggerAttack() {
-        this.envelope.triggerAttack();
+    triggerAttack(isRetrigger = false) {
+        this.envelope.triggerAttack(isRetrigger);
     }
 
     triggerRelease() {
