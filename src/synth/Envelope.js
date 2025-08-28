@@ -28,18 +28,15 @@ export class Envelope {
         );
 
         // attack
-        if (this.attack <= 0) {
-            this.parameter.setValueAtTime(1, now);
-        } else {
-            this.parameter.exponentialRampToValueAtTime(1, now + this.attack);
-        }
+        const attack = Math.max(this.attack, 0.02);
+        this.parameter.exponentialRampToValueAtTime(1, now + attack);
 
-        // decay to sustain
+        // attack
         const sustain = Math.max(this.sustain, this._min);
         if (this.decay > 0) {
-            this.parameter.exponentialRampToValueAtTime(sustain, now + this.attack + this.decay);
+            this.parameter.exponentialRampToValueAtTime(sustain, now + attack + this.decay);
         } else {
-            this.parameter.setValueAtTime(sustain, now + this.attack);
+            this.parameter.setValueAtTime(sustain, now + attack);
         }
     }
 
