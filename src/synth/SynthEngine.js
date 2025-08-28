@@ -1,11 +1,9 @@
-import { Envelope } from "./Envelope";
 import { DistortionModule } from "./modules/DistortionModule";
 import { LPFModule } from "./modules/LPFModule";
 import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
-
-// TODO: Voice as a separate class?
+import { Voice } from "./Voice";
 
 export class SynthEngine {
     constructor() {
@@ -22,7 +20,6 @@ export class SynthEngine {
         };
 
         this.voiceMode = "polyphonic";
-
         this.activeVoices = new Map();
 
         // modules
@@ -54,36 +51,24 @@ export class SynthEngine {
 
             if (existingVoice) {
                 const voiceId = existingVoice[0];
-                const voiceValue = existingVoice[1];
+                const voice = existingVoice[1];
 
-                // cancel scheduled cleanup
-                if (voiceValue.cleanupTimeout) {
-                    clearTimeout(voiceValue.cleanupTimeout);
-                    voiceValue.cleanupTimeout = null;
-                }
-
-                voiceValue.envelope.triggerAttack();
+                voice.retrigger();
                 return voiceId;
             }
         }
 
-        // polyphonic voice mode
-        const oscs = [];
-        this.oscillators.forEach((oscillator) => {
-            const osc = oscillator.createOscillator(frequency);
-            if (osc) {
-                osc.osc.start();
-                osc.gain.connect(voiceGain);
-                oscs.push(osc);
-            }
-        });
-
-        const envelope = new Envelope(this.audioCtx, this.envelopeADSR);
-        envelope.attachParameter(voiceGain.gain);
-        envelope.triggerAttack();
+        // polyphonic (new voice))
+        const voice = new Voice(
+            this.audioCtx,
+            frequency,
+            this.oscillators,
+            this.envelopeADSR,
+            this.lpf.input
+        );
 
         const voiceId = Symbol();
-        this.activeVoices.set(voiceId, { oscs, voiceGain, envelope, frequency });
+        this.activeVoices.set(voiceId, voice);
         return voiceId;
     }
 
@@ -91,13 +76,13 @@ export class SynthEngine {
         const voice = this.activeVoices.get(voiceId);
         if (!voice) return;
 
-        voice.envelope.triggerRelease();
+        voice.triggerRelease();
 
         voice.cleanupTimeout = setTimeout(() => {
             // if the voice is still in activeVoices (wasn't retriggered),
             // then kill it
             if (this.activeVoices.has(voiceId)) {
-                voice.oscs.forEach((osc) => osc.osc.stop());
+                voice.stop();
                 this.activeVoices.delete(voiceId);
             }
         }, voice.envelope.release * 1000);
@@ -110,41 +95,37 @@ export class SynthEngine {
     setWaveform(oscIndex, waveform) {
         this.oscillators[oscIndex].setWaveform(waveform);
 
-        for (const { oscs } of this.activeVoices.values()) {
-            oscs[oscIndex].osc.type = waveform;
+        for (const voice of this.activeVoices.values()) {
+            voice.setWaveform(oscIndex, waveform);
         }
     }
 
     setLevel(oscIndex, level) {
         this.oscillators[oscIndex].setLevel(level);
 
-        for (const { oscs } of this.activeVoices.values()) {
-            setSmoothLevel(oscs[oscIndex].gain.gain, this.audioCtx.currentTime, level);
+        for (const voice of this.activeVoices.values()) {
+            voice.setLevel(oscIndex, level);
         }
     }
 
     setDetune(oscIndex, detune) {
         this.oscillators[oscIndex].setDetune(detune);
 
-        for (const { oscs } of this.activeVoices.values()) {
-            oscs[oscIndex].osc.detune.setValueAtTime(detune, this.audioCtx.currentTime);
+        for (const voice of this.activeVoices.values()) {
+            voice.setDetune(oscIndex, detune);
         }
     }
 
     setEnvelopeADSR(adsr) {
         this.envelopeADSR = { ...this.envelopeADSR, ...adsr };
 
-        this.activeVoices.forEach((voice) => {
-            if (voice.envelope) voice.envelope.setADSR(adsr);
-        });
+        for (const voice of this.activeVoices.values()) {
+            voice.setADSR(adsr);
+        }
     }
 
     setVoiceMode(voiceMode) {
-        if (voiceMode === "retrigger") {
-            this.voiceMode = voiceMode;
-        } else {
-            this.voiceMode = "polyphonic";
-        }
+        this.voiceMode = voiceMode === "retrigger" ? "retrigger" : "polyphonic";
     }
 
     setBypass(moduleId, bypass) {
