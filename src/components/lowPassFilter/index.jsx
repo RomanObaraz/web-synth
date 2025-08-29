@@ -1,6 +1,7 @@
 import { Slider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
+import { LpfEnvelope } from "./lpfEnvelope";
 
 export const LowPassFilter = () => {
     const [cutoff, setCutoff] = useState(20000);
@@ -33,6 +34,8 @@ export const LowPassFilter = () => {
                 step={0.1}
                 onChange={(e) => setResonance(e.target.value)}
             />
+
+            <LpfEnvelope />
         </div>
     );
 };

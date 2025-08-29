@@ -2,7 +2,7 @@ import { Envelope } from "./Envelope";
 import { setSmoothLevel } from "./utils";
 
 export class Voice {
-    constructor(audioCtx, frequency, oscillators, envelopeADSR, destination) {
+    constructor(audioCtx, frequency, oscillators, lpf, envelopeADSR, destination) {
         this.audioCtx = audioCtx;
         this.frequency = frequency;
 
@@ -16,6 +16,8 @@ export class Voice {
             osc.gain.connect(this.voiceGain);
             return osc;
         });
+
+        this.lpf = lpf;
 
         // envelope
         this.envelope = new Envelope(audioCtx, envelopeADSR);
@@ -36,10 +38,12 @@ export class Voice {
 
     triggerAttack(isRetrigger = false) {
         this.envelope.triggerAttack(isRetrigger);
+        this.lpf.triggerAttack();
     }
 
     triggerRelease() {
         this.envelope.triggerRelease();
+        this.lpf.triggerRelease();
     }
 
     stop() {

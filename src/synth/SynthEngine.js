@@ -63,6 +63,7 @@ export class SynthEngine {
             this.audioCtx,
             frequency,
             this.oscillators,
+            this.lpf,
             this.envelopeADSR,
             this.lpf.input
         );
