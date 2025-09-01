@@ -11,11 +11,11 @@ export class LPFModule extends BaseModule {
         this.setResonance(1);
         this.baseCutoff.start();
 
-        this.envelopeSignal = this.audioCtx.createConstantSource();
-        this.envelopeSignal.offset.value = 1;
-        this.envelopeSignal.start();
+        this.envSignal = this.audioCtx.createConstantSource();
+        this.envSignal.offset.value = 1;
+        this.envSignal.start();
 
-        this.envelopeOut = this.audioCtx.createGain(); // controlled by Envelope
+        this.envOut = this.audioCtx.createGain(); // controlled by Envelope
         this.envAmount = this.audioCtx.createGain(); // controlled by UI
 
         this.envelope = new Envelope(this.audioCtx, {
@@ -24,12 +24,12 @@ export class LPFModule extends BaseModule {
             sustain: 1,
             release: 0,
         });
-        this.envelope.attachParameter(this.envelopeOut.gain);
+        this.envelope.attachParameter(this.envOut.gain);
     }
 
     route() {
-        this.envelopeSignal.connect(this.envelopeOut);
-        this.envelopeOut.connect(this.envAmount);
+        this.envSignal.connect(this.envOut);
+        this.envOut.connect(this.envAmount);
         this.envAmount.connect(this.filter.frequency);
         this.baseCutoff.connect(this.filter.frequency);
         this.input.connect(this.filter).connect(this.output);

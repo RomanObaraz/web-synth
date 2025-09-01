@@ -1,9 +1,15 @@
 import { DistortionModule } from "./modules/DistortionModule";
+import { LFOModule } from "./modules/LFOModule";
 import { LPFModule } from "./modules/LPFModule";
 import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
+
+// TODO: bug with LFO when hold 2 notes and release one of them (release from ADSR fucks up)
+// TODO: modulation matrix/bus?
+// TODO: create 3 different LFO's or one with a switch
+// TODO: do we want to implement PWM?
 
 export class SynthEngine {
     constructor() {
@@ -30,8 +36,10 @@ export class SynthEngine {
         this.lpf = new LPFModule(this.audioCtx);
         this.reverb = new ReverbModule(this.audioCtx);
         this.distortion = new DistortionModule(this.audioCtx);
+        this.lfo = new LFOModule(this.audioCtx);
 
         // connection chain
+        this.lfo.connect(this.lpf.filter.frequency); // wah
         this.lpf.output.connect(this.distortion.input);
         this.distortion.output.connect(this.reverb.input);
         this.reverb.output.connect(this.analyser);
@@ -40,9 +48,6 @@ export class SynthEngine {
     }
 
     playNote(frequency) {
-        const voiceGain = this.audioCtx.createGain();
-        voiceGain.connect(this.lpf.input);
-
         // retrigger voice mode
         if (this.voiceMode === "retrigger") {
             const existingVoice = [...this.activeVoices].find(
@@ -68,6 +73,13 @@ export class SynthEngine {
             this.lpf.input
         );
 
+        // this.lfo.connect(voice.voiceGain.gain); // tremolo
+
+        // vibrato
+        // voice.oscillators.forEach((osc) => {
+        //     this.lfo.connect(osc.osc.frequency);
+        // });
+
         const voiceId = Symbol();
         this.activeVoices.set(voiceId, voice);
         return voiceId;
@@ -84,6 +96,14 @@ export class SynthEngine {
             // then kill it
             if (this.activeVoices.has(voiceId)) {
                 voice.stop();
+
+                // this.lfo.disconnect(voice.voiceGain.gain); // tremolo
+
+                // vibrato
+                // voice.oscillators.forEach((osc) => {
+                //     this.lfo.disconnect(osc.frequency);
+                // });
+
                 this.activeVoices.delete(voiceId);
             }
         }, voice.envelope.release * 1000);

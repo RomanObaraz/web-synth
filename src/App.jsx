@@ -7,6 +7,7 @@ import { Toggleable } from "./components/toggleable";
 import { SynthProvider } from "./synthProvider/synthProvider";
 import { Distortion } from "./components/distortion";
 import { AmpEnvelope } from "./components/ampEnvelope";
+import LFO from "./components/lfo";
 
 function App() {
     return (
@@ -48,6 +49,11 @@ function App() {
                     <div className="self-center w-120">
                         <Toggleable moduleId="distortion" label="Distortion">
                             <Distortion />
+                        </Toggleable>
+                    </div>
+                    <div className="self-center w-120">
+                        <Toggleable moduleId="lfo" label="LFO">
+                            <LFO />
                         </Toggleable>
                     </div>
                 </div>
