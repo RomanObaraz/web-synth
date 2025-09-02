@@ -69,6 +69,14 @@ export const Oscilloscope = () => {
                 x += sliceWidth;
             }
 
+            // thos fixes blinking/flickering artifacts at wave end
+            for (let i = 0; i < start; i++) {
+                const value = dataArray[i];
+                const y = (value * 0.5 + 0.5) * canvas.height;
+                ctx.lineTo(x, y);
+                x += sliceWidth;
+            }
+
             ctx.stroke();
             ctx.shadowBlur = 0;
         };
