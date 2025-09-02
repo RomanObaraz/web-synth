@@ -1,12 +1,17 @@
 import { Envelope } from "./Envelope";
+import { ModulationBus } from "./ModulationBus";
 import { setSmoothLevel } from "./utils";
+
+// TODO: I don't like lpf being passed here, but where to trigger it's attack/release?
 
 export class Voice {
     constructor(audioCtx, frequency, oscillators, lpf, envelopeADSR, destination) {
         this.audioCtx = audioCtx;
         this.frequency = frequency;
+        this.lpf = lpf;
 
         this.voiceGain = this.audioCtx.createGain();
+        this.voiceGain.gain.value = 0;
         this.voiceGain.connect(destination);
 
         // create oscillators for this voice
@@ -17,14 +22,14 @@ export class Voice {
             return osc;
         });
 
-        this.lpf = lpf;
+        this.ampBus = new ModulationBus(this.audioCtx);
+        this.ampBus.connect(this.voiceGain.gain);
 
-        // envelope
-        this.envelope = new Envelope(audioCtx, envelopeADSR);
-        this.envelope.attachParameter(this.voiceGain.gain);
-        this.triggerAttack();
+        this.envelope = new Envelope(this.audioCtx, envelopeADSR);
+        this.envelope.connect(this.ampBus.input);
 
         this.cleanupTimeout = null;
+        this.triggerAttack();
     }
 
     retrigger() {

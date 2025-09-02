@@ -69,6 +69,7 @@ export const Oscilloscope = () => {
                 x += sliceWidth;
             }
 
+            // TODO: there should be a better fix for this and for 0.05 constant at sliceWidth
             // thos fixes blinking/flickering artifacts at wave end
             for (let i = 0; i < start; i++) {
                 const value = dataArray[i];

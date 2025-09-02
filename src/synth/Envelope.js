@@ -6,52 +6,54 @@ export class Envelope {
         this.decay = decay;
         this.sustain = sustain;
         this.release = release;
-
-        this.parameter = null; // AudioParam controlled by this envelope
         this._min = 0.001; // floor for exponential ramps
+
+        this.source = audioCtx.createConstantSource();
+        this.source.offset.value = 0;
+        this.output = this.source;
+        this.source.start();
     }
 
-    attachParameter(audioParam) {
-        this.parameter = audioParam;
-        this.parameter.setValueAtTime(0, this.audioCtx.currentTime);
+    connect(destination) {
+        this.output.connect(destination);
+    }
+
+    disconnect(destination) {
+        this.output.disconnect(destination);
     }
 
     triggerAttack(isRetrigger = false) {
-        if (!this.parameter) return;
-
         const now = this.audioCtx.currentTime;
-        this.parameter.cancelScheduledValues(now);
+        const parameter = this.source.offset;
 
-        this.parameter.setValueAtTime(
-            Math.max(isRetrigger ? this.parameter.value : 0, this._min),
-            now
-        );
+        parameter.cancelScheduledValues(now);
+        parameter.setValueAtTime(Math.max(isRetrigger ? parameter.value : 0, this._min), now);
 
         // attack
         const attack = Math.max(this.attack, 0.02);
-        this.parameter.exponentialRampToValueAtTime(1, now + attack);
+        parameter.exponentialRampToValueAtTime(1, now + attack);
 
-        // attack
+        // decay
         const sustain = Math.max(this.sustain, this._min);
         if (this.decay > 0) {
-            this.parameter.exponentialRampToValueAtTime(sustain, now + attack + this.decay);
+            parameter.exponentialRampToValueAtTime(sustain, now + attack + this.decay);
         } else {
-            this.parameter.setValueAtTime(sustain, now + attack);
+            parameter.setValueAtTime(sustain, now + attack);
         }
     }
 
     triggerRelease() {
-        if (!this.parameter) return;
-
         const now = this.audioCtx.currentTime;
-        this.parameter.cancelScheduledValues(now);
-        this.parameter.setValueAtTime(Math.max(this.parameter.value, this._min), now);
+        const parameter = this.source.offset;
+
+        parameter.cancelScheduledValues(now);
+        parameter.setValueAtTime(Math.max(parameter.value, this._min), now);
 
         // release
         if (this.release > 0) {
-            this.parameter.exponentialRampToValueAtTime(this._min, now + this.release);
+            parameter.exponentialRampToValueAtTime(this._min, now + this.release);
         } else {
-            this.parameter.setValueAtTime(this._min, now);
+            parameter.setValueAtTime(this._min, now);
         }
     }
 

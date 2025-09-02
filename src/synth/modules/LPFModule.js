@@ -1,4 +1,5 @@
 import { Envelope } from "../Envelope";
+import { ModulationBus } from "../ModulationBus";
 import { BaseModule } from "./BaseModule";
 
 export class LPFModule extends BaseModule {
@@ -11,11 +12,6 @@ export class LPFModule extends BaseModule {
         this.setResonance(1);
         this.baseCutoff.start();
 
-        this.envSignal = this.audioCtx.createConstantSource();
-        this.envSignal.offset.value = 1;
-        this.envSignal.start();
-
-        this.envOut = this.audioCtx.createGain(); // controlled by Envelope
         this.envAmount = this.audioCtx.createGain(); // controlled by UI
 
         this.envelope = new Envelope(this.audioCtx, {
@@ -24,14 +20,15 @@ export class LPFModule extends BaseModule {
             sustain: 1,
             release: 0,
         });
-        this.envelope.attachParameter(this.envOut.gain);
+
+        this.cutoffBus = new ModulationBus(this.audioCtx);
     }
 
     route() {
-        this.envSignal.connect(this.envOut);
-        this.envOut.connect(this.envAmount);
-        this.envAmount.connect(this.filter.frequency);
+        this.envelope.connect(this.envAmount);
+        this.envAmount.connect(this.cutoffBus.input);
         this.baseCutoff.connect(this.filter.frequency);
+        this.cutoffBus.connect(this.filter.frequency);
         this.input.connect(this.filter).connect(this.output);
     }
 

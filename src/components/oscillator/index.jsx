@@ -4,7 +4,7 @@ import { useSynth } from "../../hooks/useSynth";
 
 export const Oscillator = ({ id }) => {
     const [waveform, setWaveform] = useState("triangle");
-    const [level, setLevel] = useState(25);
+    const [level, setLevel] = useState(10);
     const [detune, setDetune] = useState(0);
 
     const { synth } = useSynth();
