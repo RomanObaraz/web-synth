@@ -7,9 +7,9 @@ import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
 // TODO: bug with LFO when hold 2 notes and release one of them (release from ADSR fucks up)
-// TODO: modulation matrix/bus?
-// TODO: create 3 different LFO's or one with a switch
-// TODO: do we want to implement PWM?
+// TODO: implement PWM?
+// TODO: other variant of filter envelope?
+// TODO: should I move Envelope out of LPFModule and Voice?
 
 export class SynthEngine {
     constructor() {
@@ -37,9 +37,9 @@ export class SynthEngine {
         this.reverb = new ReverbModule(this.audioCtx);
         this.distortion = new DistortionModule(this.audioCtx);
         this.lfo = new LFOModule(this.audioCtx);
+        this.lfoMode = "wah";
 
         // connection chain
-        this.lfo.connect(this.lpf.filter.frequency); // wah
         this.lpf.output.connect(this.distortion.input);
         this.distortion.output.connect(this.reverb.input);
         this.reverb.output.connect(this.analyser);
@@ -73,12 +73,7 @@ export class SynthEngine {
             this.lpf.input
         );
 
-        // this.lfo.connect(voice.voiceGain.gain); // tremolo
-
-        // vibrato
-        // voice.oscillators.forEach((osc) => {
-        //     this.lfo.connect(osc.osc.frequency);
-        // });
+        voice.connectLfo(this.lfo, this.lfoMode);
 
         const voiceId = Symbol();
         this.activeVoices.set(voiceId, voice);
@@ -95,15 +90,8 @@ export class SynthEngine {
             // if the voice is still in activeVoices (wasn't retriggered),
             // then kill it
             if (this.activeVoices.has(voiceId)) {
+                voice.disconnectLfo(this.lfo, this.lfoMode);
                 voice.stop();
-
-                // this.lfo.disconnect(voice.voiceGain.gain); // tremolo
-
-                // vibrato
-                // voice.oscillators.forEach((osc) => {
-                //     this.lfo.disconnect(osc.frequency);
-                // });
-
                 this.activeVoices.delete(voiceId);
             }
         }, voice.envelope.release * 1000);
@@ -147,6 +135,19 @@ export class SynthEngine {
 
     setVoiceMode(voiceMode) {
         this.voiceMode = voiceMode === "retrigger" ? "retrigger" : "polyphonic";
+    }
+
+    setLfoMode(mode) {
+        this.lfo.disconnect();
+        this.lfoMode = mode;
+
+        if (mode === "wah") {
+            this.lfo.connect(this.lpf.cutoffBus.input);
+        } else {
+            for (const voice of this.activeVoices.values()) {
+                voice.connectLfo(this.lfo, mode);
+            }
+        }
     }
 
     setBypass(moduleId, bypass) {

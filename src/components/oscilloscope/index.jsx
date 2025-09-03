@@ -70,6 +70,7 @@ export const Oscilloscope = () => {
             }
 
             // TODO: there should be a better fix for this and for 0.05 constant at sliceWidth
+            // TODO: this creates visible artifacts in some cases (square vibrato depth 100)
             // thos fixes blinking/flickering artifacts at wave end
             for (let i = 0; i < start; i++) {
                 const value = dataArray[i];

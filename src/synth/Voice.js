@@ -55,6 +55,32 @@ export class Voice {
         this.oscillators.forEach((osc) => osc.osc.stop());
     }
 
+    connectLfo(lfo, mode) {
+        switch (mode) {
+            case "vibrato":
+                this.oscillators.forEach((osc) => {
+                    lfo.connect(osc.frequencyBus.input);
+                });
+                break;
+            case "tremolo":
+                lfo.connect(this.ampBus.input);
+                break;
+        }
+    }
+
+    disconnectLfo(lfo, mode) {
+        switch (mode) {
+            case "vibrato":
+                this.oscillators.forEach((osc) => {
+                    lfo.disconnect(osc.frequencyBus.input);
+                });
+                break;
+            case "tremolo":
+                lfo.disconnect(this.ampBus.input);
+                break;
+        }
+    }
+
     setWaveform(index, waveform) {
         this.oscillators[index].osc.type = waveform;
     }

@@ -13,13 +13,51 @@ import {
 import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 
+const depthRangeOptions = {
+    vibrato: {
+        min: 0,
+        max: 100,
+        step: 1,
+    },
+    tremolo: {
+        min: 0,
+        max: 1,
+        step: 0.1,
+    },
+    wah: {
+        min: 0,
+        max: 5000,
+        step: 1,
+    },
+};
+
 export default function LFO() {
     const [waveform, setWaveform] = useState("sine");
     const [rate, setRate] = useState(2);
     const [depth, setDepth] = useState(100);
     const [lfoMode, setLfoMode] = useState("wah");
+    const [depthRange, setDepthRange] = useState(depthRangeOptions.wah);
 
     const { synth } = useSynth();
+
+    const handleSetLfoMode = (mode) => {
+        switch (mode) {
+            case "vibrato":
+                setDepthRange(depthRangeOptions.vibrato);
+                setDepth(5);
+                break;
+            case "tremolo":
+                setDepthRange(depthRangeOptions.tremolo);
+                setDepth(0.5);
+                break;
+            case "wah":
+                setDepthRange(depthRangeOptions.wah);
+                setDepth(100);
+                break;
+        }
+
+        setLfoMode(mode);
+    };
 
     useEffect(() => {
         synth.lfo.setWaveform(waveform);
@@ -65,15 +103,15 @@ export default function LFO() {
                 <Typography>Depth: {depth}</Typography>
                 <Slider
                     value={depth}
-                    min={0}
-                    max={100}
-                    step={1}
+                    min={depthRange.min}
+                    max={depthRange.max}
+                    step={depthRange.step}
                     onChange={(e) => setDepth(e.target.value)}
                 />
             </div>
 
             <FormControl>
-                <RadioGroup value={lfoMode} onChange={(e) => setLfoMode(e.target.value)}>
+                <RadioGroup value={lfoMode} onChange={(e) => handleSetLfoMode(e.target.value)}>
                     <Tooltip title="Vibrato" placement="right">
                         <FormControlLabel value="vibrato" control={<Radio />} label="V" />
                     </Tooltip>

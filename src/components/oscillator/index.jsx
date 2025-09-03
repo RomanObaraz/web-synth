@@ -3,7 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select, Slider, Typography } from "@
 import { useSynth } from "../../hooks/useSynth";
 
 export const Oscillator = ({ id }) => {
-    const [waveform, setWaveform] = useState("triangle");
+    const [waveform, setWaveform] = useState("square");
     const [level, setLevel] = useState(10);
     const [detune, setDetune] = useState(0);
 
