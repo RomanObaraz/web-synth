@@ -1,3 +1,4 @@
+import { ModulationBus } from "../ModulationBus";
 import { BaseModule } from "./BaseModule";
 
 export class OscillatorModule extends BaseModule {
@@ -20,9 +21,12 @@ export class OscillatorModule extends BaseModule {
         const gain = this.audioCtx.createGain();
         gain.gain.setValueAtTime(this.enabled ? this.level : 0, this.audioCtx.currentTime);
 
+        const frequencyBus = new ModulationBus(this.audioCtx);
+        frequencyBus.connect(osc.frequency);
+
         osc.connect(gain);
 
-        return { osc, gain };
+        return { osc, gain, frequencyBus };
     }
 
     setWaveform(waveform) {
