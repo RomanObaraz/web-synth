@@ -63,7 +63,7 @@ export class Voice {
                 });
                 break;
             case "tremolo":
-                lfo.connect(this.ampBus.input);
+                lfo.connect(this.ampBus.input.gain);
                 break;
         }
     }
@@ -76,7 +76,7 @@ export class Voice {
                 });
                 break;
             case "tremolo":
-                lfo.disconnect(this.ampBus.input);
+                lfo.disconnect(this.ampBus.input.gain);
                 break;
         }
     }

@@ -6,7 +6,7 @@ import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
-// TODO: bug with LFO when hold 2 notes and release one of them (release from ADSR fucks up)
+// TODO: wah bugs on low baseCutoff and high LFO depth
 // TODO: implement PWM?
 // TODO: other variant of filter envelope?
 // TODO: should I move Envelope out of LPFModule and Voice?
