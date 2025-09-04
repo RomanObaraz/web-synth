@@ -1,6 +1,7 @@
 import { Envelope } from "../Envelope";
 import { ModulationBus } from "../ModulationBus";
 import { BaseModule } from "./BaseModule";
+import { MinMaxClampNode } from "../MinMaxClampNode";
 
 export class LPFModule extends BaseModule {
     initModule() {
@@ -12,7 +13,7 @@ export class LPFModule extends BaseModule {
         this.setResonance(1);
         this.baseCutoff.start();
 
-        this.envAmount = this.audioCtx.createGain(); // controlled by UI
+        this.envAmount = this.audioCtx.createGain();
 
         this.envelope = new Envelope(this.audioCtx, {
             attack: 0,
@@ -22,13 +23,20 @@ export class LPFModule extends BaseModule {
         });
 
         this.cutoffBus = new ModulationBus(this.audioCtx);
+
+        this.cutoffClamp = new MinMaxClampNode(this.audioCtx, {
+            min: 40,
+            max: Math.min(20000, this.audioCtx.sampleRate * 0.49),
+            softness: 0,
+        });
     }
 
     route() {
+        this.baseCutoff.connect(this.cutoffBus.input);
         this.envelope.connect(this.envAmount);
         this.envAmount.connect(this.cutoffBus.input);
-        this.baseCutoff.connect(this.filter.frequency);
-        this.cutoffBus.connect(this.filter.frequency);
+        this.cutoffBus.connect(this.cutoffClamp);
+        this.cutoffClamp.connect(this.filter.frequency);
         this.input.connect(this.filter).connect(this.output);
     }
 

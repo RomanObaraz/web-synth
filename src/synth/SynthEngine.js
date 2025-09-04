@@ -6,7 +6,6 @@ import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
-// TODO: wah bugs on low baseCutoff and high LFO depth
 // TODO: implement PWM?
 // TODO: other variant of filter envelope?
 // TODO: should I move Envelope out of LPFModule and Voice?
@@ -27,6 +26,10 @@ export class SynthEngine {
 
         this.voiceMode = "polyphonic";
         this.activeVoices = new Map();
+    }
+
+    async init() {
+        await this.audioCtx.audioWorklet.addModule("/clamp-processor.js");
 
         // modules
         this.oscillators = [
