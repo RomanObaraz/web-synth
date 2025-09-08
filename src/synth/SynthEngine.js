@@ -9,6 +9,7 @@ import { Voice } from "./Voice";
 // TODO: implement PWM?
 // TODO: other variant of filter envelope?
 // TODO: should I move Envelope out of LPFModule and Voice?
+// TODO: osc param setters are a mess and live in several classes
 
 export class SynthEngine {
     constructor() {
@@ -29,7 +30,10 @@ export class SynthEngine {
     }
 
     async init() {
-        await this.audioCtx.audioWorklet.addModule("/clamp-processor.js");
+        await Promise.all([
+            this.audioCtx.audioWorklet.addModule("/clamp-processor.js"),
+            this.audioCtx.audioWorklet.addModule("/pulse-oscillator-processor.js"),
+        ]);
 
         // modules
         this.oscillators = [
@@ -128,6 +132,14 @@ export class SynthEngine {
         }
     }
 
+    setPulseWidth(oscIndex, pulseWidth) {
+        this.oscillators[oscIndex].setPulseWidth(pulseWidth);
+
+        for (const voice of this.activeVoices.values()) {
+            voice.setPulseWidth(oscIndex, pulseWidth);
+        }
+    }
+
     setEnvelopeADSR(adsr) {
         this.envelopeADSR = { ...this.envelopeADSR, ...adsr };
 
@@ -159,9 +171,9 @@ export class SynthEngine {
 
             this.oscillators[oscIndex].toggleBypass(bypass);
 
-            for (const { oscs } of this.activeVoices.values()) {
+            for (const { oscillators } of this.activeVoices.values()) {
                 setSmoothLevel(
-                    oscs[oscIndex].gain.gain,
+                    oscillators[oscIndex].gain.gain,
                     this.audioCtx.currentTime,
                     bypass ? 0 : this.oscillators[oscIndex].level
                 );

@@ -1,4 +1,5 @@
 import { ModulationBus } from "../ModulationBus";
+import { PulseOscillator } from "../PulseOscillator";
 import { BaseModule } from "./BaseModule";
 
 export class OscillatorModule extends BaseModule {
@@ -10,19 +11,26 @@ export class OscillatorModule extends BaseModule {
         this.waveform = "triangle";
         this.setLevel(1);
         this.setDetune(0);
+        this.setPulseWidth(0.5);
     }
 
     createOscillator(frequency) {
-        const osc = this.audioCtx.createOscillator();
-        osc.type = this.waveform;
-        osc.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
-        osc.detune.setValueAtTime(this.detune, this.audioCtx.currentTime);
-
         const gain = this.audioCtx.createGain();
         gain.gain.setValueAtTime(this.enabled ? this.level : 0, this.audioCtx.currentTime);
 
         const frequencyBus = new ModulationBus(this.audioCtx);
-        frequencyBus.connect(osc.frequency);
+
+        let osc;
+        if (this.waveform === "pulse") {
+            osc = new PulseOscillator(this.audioCtx, frequency, this.detune, this.pulseWidth);
+            frequencyBus.connect(osc.frequency);
+        } else {
+            osc = this.audioCtx.createOscillator();
+            osc.type = this.waveform;
+            osc.frequency.setValueAtTime(frequency, this.audioCtx.currentTime);
+            osc.detune.setValueAtTime(this.detune, this.audioCtx.currentTime);
+            frequencyBus.connect(osc.frequency);
+        }
 
         osc.connect(gain);
 
@@ -39,6 +47,10 @@ export class OscillatorModule extends BaseModule {
 
     setDetune(detune) {
         this.detune = detune;
+    }
+
+    setPulseWidth(width) {
+        this.pulseWidth = Math.min(0.9, Math.max(0.1, width));
     }
 
     toggleBypass(on) {

@@ -93,6 +93,10 @@ export class Voice {
         this.oscillators[index].osc.detune.setValueAtTime(detune, this.audioCtx.currentTime);
     }
 
+    setPulseWidth(index, pulseWidth) {
+        this.oscillators[index].osc.setPulseWidth(pulseWidth);
+    }
+
     setADSR(adsr) {
         this.envelope.setADSR(adsr);
     }

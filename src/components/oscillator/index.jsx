@@ -3,9 +3,10 @@ import { FormControl, InputLabel, MenuItem, Select, Slider, Typography } from "@
 import { useSynth } from "../../hooks/useSynth";
 
 export const Oscillator = ({ id }) => {
-    const [waveform, setWaveform] = useState("square");
+    const [waveform, setWaveform] = useState("pulse");
     const [level, setLevel] = useState(10);
     const [detune, setDetune] = useState(0);
+    const [pulseWidth, setPulseWidth] = useState(0.5);
 
     const { synth } = useSynth();
 
@@ -21,6 +22,10 @@ export const Oscillator = ({ id }) => {
         synth.setDetune(id, detune);
     }, [synth, id, detune]);
 
+    useEffect(() => {
+        synth.setPulseWidth(id, pulseWidth);
+    }, [synth, id, pulseWidth]);
+
     return (
         <div>
             <FormControl fullWidth>
@@ -32,7 +37,7 @@ export const Oscillator = ({ id }) => {
                     onChange={(e) => setWaveform(e.target.value)}
                 >
                     <MenuItem value="sine">Sine</MenuItem>
-                    <MenuItem value="square">Square</MenuItem>
+                    <MenuItem value="pulse">Pulse</MenuItem>
                     <MenuItem value="triangle">Triangle</MenuItem>
                     <MenuItem value="sawtooth">Sawtooth</MenuItem>
                 </Select>
@@ -60,6 +65,20 @@ export const Oscillator = ({ id }) => {
                     onChange={(e) => setDetune(e.target.value)}
                 />
             </div>
+
+            {waveform === "pulse" && (
+                <div>
+                    <Typography gutterBottom>Pulse width: {pulseWidth}</Typography>
+                    <Slider
+                        value={pulseWidth}
+                        min={0.1}
+                        max={0.9}
+                        step={0.01}
+                        marks={[{ value: 0.5 }]}
+                        onChange={(e) => setPulseWidth(e.target.value)}
+                    />
+                </div>
+            )}
         </div>
     );
 };
