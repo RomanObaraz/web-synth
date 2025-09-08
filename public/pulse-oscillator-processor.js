@@ -18,8 +18,8 @@ class PulseOscillatorProcessor extends AudioWorkletProcessor {
             {
                 name: "pulseWidth",
                 defaultValue: 0.5,
-                minValue: 0.1,
-                maxValue: 0.9,
+                minValue: 0.05,
+                maxValue: 0.95,
                 automationRate: "a-rate",
             },
         ];

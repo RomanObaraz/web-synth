@@ -71,8 +71,8 @@ export const Oscillator = ({ id }) => {
                     <Typography gutterBottom>Pulse width: {pulseWidth}</Typography>
                     <Slider
                         value={pulseWidth}
-                        min={0.1}
-                        max={0.9}
+                        min={0.05}
+                        max={0.95}
                         step={0.01}
                         marks={[{ value: 0.5 }]}
                         onChange={(e) => setPulseWidth(e.target.value)}

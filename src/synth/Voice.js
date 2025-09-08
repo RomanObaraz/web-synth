@@ -65,6 +65,11 @@ export class Voice {
             case "tremolo":
                 lfo.connect(this.ampBus.input.gain);
                 break;
+            case "pwm":
+                this.oscillators.forEach((osc) => {
+                    lfo.connect(osc.pulseWidthBus.input);
+                });
+                break;
         }
     }
 

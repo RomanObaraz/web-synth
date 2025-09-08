@@ -18,16 +18,25 @@ const depthRangeOptions = {
         min: 0,
         max: 100,
         step: 1,
+        default: 5,
     },
     tremolo: {
         min: 0,
         max: 1,
         step: 0.1,
+        default: 0.5,
     },
     wah: {
         min: 0,
         max: 5000,
         step: 1,
+        default: 100,
+    },
+    pwm: {
+        min: 0.1,
+        max: 0.9,
+        step: 0.01,
+        default: 0.4,
     },
 };
 
@@ -41,22 +50,11 @@ export default function LFO() {
     const { synth } = useSynth();
 
     const handleSetLfoMode = (mode) => {
-        switch (mode) {
-            case "vibrato":
-                setDepthRange(depthRangeOptions.vibrato);
-                setDepth(5);
-                break;
-            case "tremolo":
-                setDepthRange(depthRangeOptions.tremolo);
-                setDepth(0.5);
-                break;
-            case "wah":
-                setDepthRange(depthRangeOptions.wah);
-                setDepth(100);
-                break;
+        if (depthRangeOptions[mode]) {
+            setDepthRange(depthRangeOptions[mode]);
+            setDepth(depthRangeOptions[mode].default);
+            setLfoMode(mode);
         }
-
-        setLfoMode(mode);
     };
 
     useEffect(() => {
@@ -120,6 +118,9 @@ export default function LFO() {
                     </Tooltip>
                     <Tooltip title="Wah" placement="right">
                         <FormControlLabel value="wah" control={<Radio />} label="W" />
+                    </Tooltip>
+                    <Tooltip title="PWM" placement="right">
+                        <FormControlLabel value="pwm" control={<Radio />} label="P" />
                     </Tooltip>
                 </RadioGroup>
             </FormControl>

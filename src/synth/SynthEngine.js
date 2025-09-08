@@ -6,10 +6,10 @@ import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
-// TODO: implement PWM?
+// TODO: fix changing wave type while playing a note
+// TODO: osc param setters are a mess and live in several classes
 // TODO: other variant of filter envelope?
 // TODO: should I move Envelope out of LPFModule and Voice?
-// TODO: osc param setters are a mess and live in several classes
 
 export class SynthEngine {
     constructor() {

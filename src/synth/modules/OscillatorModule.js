@@ -19,11 +19,13 @@ export class OscillatorModule extends BaseModule {
         gain.gain.setValueAtTime(this.enabled ? this.level : 0, this.audioCtx.currentTime);
 
         const frequencyBus = new ModulationBus(this.audioCtx);
+        const pulseWidthBus = new ModulationBus(this.audioCtx);
 
         let osc;
         if (this.waveform === "pulse") {
             osc = new PulseOscillator(this.audioCtx, frequency, this.detune, this.pulseWidth);
             frequencyBus.connect(osc.frequency);
+            pulseWidthBus.connect(osc.pulseWidth);
         } else {
             osc = this.audioCtx.createOscillator();
             osc.type = this.waveform;
@@ -34,7 +36,7 @@ export class OscillatorModule extends BaseModule {
 
         osc.connect(gain);
 
-        return { osc, gain, frequencyBus };
+        return { osc, gain, frequencyBus, pulseWidthBus };
     }
 
     setWaveform(waveform) {
@@ -50,7 +52,7 @@ export class OscillatorModule extends BaseModule {
     }
 
     setPulseWidth(width) {
-        this.pulseWidth = Math.min(0.9, Math.max(0.1, width));
+        this.pulseWidth = Math.min(0.95, Math.max(0.05, width));
     }
 
     toggleBypass(on) {
