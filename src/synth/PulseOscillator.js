@@ -7,6 +7,7 @@ export class PulseOscillator {
             outputChannelCount: [1],
         });
 
+        this.type = "pulse";
         this.frequency = this.output.parameters.get("frequency");
         this.detune = this.output.parameters.get("detune");
         this.pulseWidth = this.output.parameters.get("pulseWidth");

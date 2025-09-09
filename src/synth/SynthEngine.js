@@ -6,7 +6,6 @@ import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
-// TODO: fix changing wave type while playing a note
 // TODO: osc param setters are a mess and live in several classes
 // TODO: other variant of filter envelope?
 // TODO: should I move Envelope out of LPFModule and Voice?
@@ -112,7 +111,7 @@ export class SynthEngine {
         this.oscillators[oscIndex].setWaveform(waveform);
 
         for (const voice of this.activeVoices.values()) {
-            voice.setWaveform(oscIndex, waveform);
+            voice.setWaveform(oscIndex, waveform, this.oscillators);
         }
     }
 

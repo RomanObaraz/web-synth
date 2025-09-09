@@ -86,8 +86,34 @@ export class Voice {
         }
     }
 
-    setWaveform(index, waveform) {
-        this.oscillators[index].osc.type = waveform;
+    setWaveform(index, waveform, oscModules) {
+        // built-in osc case
+        if (this.oscillators[index].osc.type !== "pulse" && waveform !== "pulse") {
+            this.oscillators[index].osc.type = waveform;
+            return;
+        }
+
+        // switching to or from pulse - crossfade
+        // we need to recreate both all oscillators to keep them phase aligned
+        this.oscillators.forEach((osc, i) => {
+            if (!oscModules[i].enabled) return;
+
+            const oldGain = osc.gain;
+            const newOscWrapper = oscModules[i].createOscillator(osc.osc.frequency.value);
+            newOscWrapper.gain.gain.setValueAtTime(0, this.audioCtx.currentTime);
+            newOscWrapper.gain.gain.linearRampToValueAtTime(
+                oscModules[i].level,
+                this.audioCtx.currentTime + 0.02
+            );
+
+            oldGain.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime + 0.02);
+
+            // connect new one to the same destination
+            newOscWrapper.gain.connect(this.voiceGain);
+            newOscWrapper.osc.start();
+
+            this.oscillators[i] = newOscWrapper;
+        });
     }
 
     setLevel(index, level) {
