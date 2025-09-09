@@ -153,6 +153,10 @@ export class SynthEngine {
 
     setLfoMode(mode) {
         this.lfo.disconnect();
+        for (const voice of this.activeVoices.values()) {
+            voice.clearConnectedLfo();
+        }
+
         this.lfoMode = mode;
 
         if (mode === "wah") {

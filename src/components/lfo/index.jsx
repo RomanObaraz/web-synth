@@ -33,7 +33,7 @@ const depthRangeOptions = {
         default: 100,
     },
     pwm: {
-        min: 0.1,
+        min: 0,
         max: 0.9,
         step: 0.01,
         default: 0.4,

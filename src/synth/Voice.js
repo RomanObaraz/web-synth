@@ -28,6 +28,8 @@ export class Voice {
         this.envelope = new Envelope(this.audioCtx, envelopeADSR);
         this.envelope.connect(this.ampBus.input);
 
+        this.connectedLfos = []; // need when change to/from pulse wave drops LFOs
+
         this.cleanupTimeout = null;
         this.triggerAttack();
     }
@@ -71,6 +73,8 @@ export class Voice {
                 });
                 break;
         }
+
+        this.connectedLfos.push({ lfo, mode });
     }
 
     disconnectLfo(lfo, mode) {
@@ -89,6 +93,14 @@ export class Voice {
                 });
                 break;
         }
+
+        this.connectedLfos = this.connectedLfos.filter(
+            (entry) => !(entry.lfo === lfo && entry.mode === mode)
+        );
+    }
+
+    clearConnectedLfo() {
+        this.connectedLfos = [];
     }
 
     setWaveform(index, waveform, oscModules) {
@@ -118,6 +130,18 @@ export class Voice {
             newOsc.osc.start();
 
             this.oscillators[i] = newOsc;
+
+            // reconnect all previously connected LFOs for this new oscillator
+            this.connectedLfos.forEach(({ lfo, mode }) => {
+                switch (mode) {
+                    case "vibrato":
+                        lfo.connect(newOsc.frequencyBus.input);
+                        break;
+                    case "pwm":
+                        lfo.connect(newOsc.pulseWidthBus.input);
+                        break;
+                }
+            });
         });
     }
 
