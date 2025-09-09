@@ -83,6 +83,11 @@ export class Voice {
             case "tremolo":
                 lfo.disconnect(this.ampBus.input.gain);
                 break;
+            case "pwm":
+                this.oscillators.forEach((osc) => {
+                    lfo.disconnect(osc.pulseWidthBus.input);
+                });
+                break;
         }
     }
 
@@ -99,9 +104,9 @@ export class Voice {
             if (!oscModules[i].enabled) return;
 
             const oldGain = osc.gain;
-            const newOscWrapper = oscModules[i].createOscillator(osc.osc.frequency.value);
-            newOscWrapper.gain.gain.setValueAtTime(0, this.audioCtx.currentTime);
-            newOscWrapper.gain.gain.linearRampToValueAtTime(
+            const newOsc = oscModules[i].createOscillator(osc.osc.frequency.value);
+            newOsc.gain.gain.setValueAtTime(0, this.audioCtx.currentTime);
+            newOsc.gain.gain.linearRampToValueAtTime(
                 oscModules[i].level,
                 this.audioCtx.currentTime + 0.02
             );
@@ -109,10 +114,10 @@ export class Voice {
             oldGain.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime + 0.02);
 
             // connect new one to the same destination
-            newOscWrapper.gain.connect(this.voiceGain);
-            newOscWrapper.osc.start();
+            newOsc.gain.connect(this.voiceGain);
+            newOsc.osc.start();
 
-            this.oscillators[i] = newOscWrapper;
+            this.oscillators[i] = newOsc;
         });
     }
 
