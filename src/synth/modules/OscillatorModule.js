@@ -51,8 +51,9 @@ export class OscillatorModule extends BaseModule {
         this.detune = detune;
     }
 
-    setPulseWidth(width) {
-        this.pulseWidth = Math.min(0.95, Math.max(0.05, width));
+    setPulseWidth(pulseWidth) {
+        const clampedPulseWidth = Math.min(0.95, Math.max(0.05, pulseWidth));
+        this.pulseWidth = clampedPulseWidth;
     }
 
     toggleBypass(on) {

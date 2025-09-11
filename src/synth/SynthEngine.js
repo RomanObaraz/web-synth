@@ -8,7 +8,6 @@ import { Voice } from "./Voice";
 
 // TODO: osc param setters are a mess and live in several classes
 // TODO: other variant of filter envelope?
-// TODO: should I move Envelope out of LPFModule and Voice?
 
 export class SynthEngine {
     constructor() {
@@ -74,12 +73,13 @@ export class SynthEngine {
             this.audioCtx,
             frequency,
             this.oscillators,
-            this.lpf,
             this.envelopeADSR,
             this.lpf.input
         );
 
         voice.connectLfo(this.lfo, this.lfoMode);
+        voice.triggerAttack();
+        this.lpf.triggerAttack();
 
         const voiceId = Symbol();
         this.activeVoices.set(voiceId, voice);
@@ -91,6 +91,7 @@ export class SynthEngine {
         if (!voice) return;
 
         voice.triggerRelease();
+        this.lpf.triggerRelease();
 
         voice.cleanupTimeout = setTimeout(() => {
             // if the voice is still in activeVoices (wasn't retriggered),
@@ -100,7 +101,7 @@ export class SynthEngine {
                 voice.stop();
                 this.activeVoices.delete(voiceId);
             }
-        }, voice.envelope.release * 1000);
+        }, voice.ampEnvelope.release * 1000);
     }
 
     /*

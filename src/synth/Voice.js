@@ -2,15 +2,12 @@ import { Envelope } from "./Envelope";
 import { ModulationBus } from "./ModulationBus";
 import { setSmoothLevel } from "./utils";
 
-// TODO: I don't like lpf being passed here, but where to trigger it's attack/release?
-
 export class Voice {
-    constructor(audioCtx, frequency, oscillators, lpf, envelopeADSR, destination) {
+    constructor(audioCtx, frequency, oscillators, envelopeADSR, destination) {
         this.audioCtx = audioCtx;
         this.frequency = frequency;
-        this.lpf = lpf;
 
-        this.voiceGain = this.audioCtx.createGain();
+        this.voiceGain = audioCtx.createGain();
         this.voiceGain.gain.value = 0;
         this.voiceGain.connect(destination);
 
@@ -22,16 +19,15 @@ export class Voice {
             return osc;
         });
 
-        this.ampBus = new ModulationBus(this.audioCtx);
+        this.ampBus = new ModulationBus(audioCtx);
         this.ampBus.connect(this.voiceGain.gain);
 
-        this.envelope = new Envelope(this.audioCtx, envelopeADSR);
-        this.envelope.connect(this.ampBus.input);
+        this.ampEnvelope = new Envelope(audioCtx, envelopeADSR);
+        this.ampEnvelope.connect(this.ampBus.input);
 
         this.connectedLfos = []; // need when change to/from pulse wave drops LFOs
 
         this.cleanupTimeout = null;
-        this.triggerAttack();
     }
 
     retrigger() {
@@ -44,13 +40,11 @@ export class Voice {
     }
 
     triggerAttack(isRetrigger = false) {
-        this.envelope.triggerAttack(isRetrigger);
-        this.lpf.triggerAttack();
+        this.ampEnvelope.triggerAttack(isRetrigger);
     }
 
     triggerRelease() {
-        this.envelope.triggerRelease();
-        this.lpf.triggerRelease();
+        this.ampEnvelope.triggerRelease();
     }
 
     stop() {
@@ -154,10 +148,14 @@ export class Voice {
     }
 
     setPulseWidth(index, pulseWidth) {
-        this.oscillators[index].osc.setPulseWidth(pulseWidth);
+        const clampedPulseWidth = Math.min(0.95, Math.max(0.05, pulseWidth));
+        this.oscillators[index].osc.pulseWidth.setValueAtTime(
+            clampedPulseWidth,
+            this.audioCtx.currentTime
+        );
     }
 
     setADSR(adsr) {
-        this.envelope.setADSR(adsr);
+        this.ampEnvelope.setADSR(adsr);
     }
 }

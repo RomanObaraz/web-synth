@@ -32,8 +32,4 @@ export class PulseOscillator {
     stop() {
         this.output.port.postMessage("stop");
     }
-
-    setPulseWidth(pulseWidth) {
-        this.pulseWidth.setValueAtTime(pulseWidth, this.audioCtx.currentTime);
-    }
 }
