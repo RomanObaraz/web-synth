@@ -17,10 +17,10 @@ export class ReverbModule extends BaseModule {
     }
 
     async loadImpulse() {
-        const leftBuffer = await fetch("/src/assets/impulses/hall-l.wav")
+        const leftBuffer = await fetch("/src/assets/impulses/great-hall-l.wav")
             .then((r) => r.arrayBuffer())
             .then((a) => this.audioCtx.decodeAudioData(a));
-        const rightBuffer = await fetch("/src/assets/impulses/hall-r.wav")
+        const rightBuffer = await fetch("/src/assets/impulses/great-hall-r.wav")
             .then((r) => r.arrayBuffer())
             .then((a) => this.audioCtx.decodeAudioData(a));
 
