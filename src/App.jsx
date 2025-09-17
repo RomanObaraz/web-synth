@@ -8,6 +8,7 @@ import { SynthProvider } from "./synthProvider/synthProvider";
 import { Distortion } from "./components/distortion";
 import { AmpEnvelope } from "./components/ampEnvelope";
 import LFO from "./components/lfo";
+import { SubOscillator } from "./components/oscillator/subOscillator";
 
 function App() {
     return (
@@ -26,6 +27,11 @@ function App() {
                     <div className="w-80">
                         <Toggleable moduleId="osc-1" label="OSC-2">
                             <Oscillator id={1} />
+                        </Toggleable>
+                    </div>
+                    <div className="w-80">
+                        <Toggleable moduleId="subOscillator" label="Sub-OSC">
+                            <SubOscillator id={0} />
                         </Toggleable>
                     </div>
                     <div className="w-100">

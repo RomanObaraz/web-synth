@@ -1,9 +1,9 @@
 import { Envelope } from "./Envelope";
 import { ModulationBus } from "./ModulationBus";
-import { setSmoothLevel } from "./utils";
+import { getSubOscFrequency, setSmoothLevel } from "./utils";
 
 export class Voice {
-    constructor(audioCtx, frequency, oscillators, envelopeADSR, destination) {
+    constructor(audioCtx, frequency, oscillators, subOscillators, envelopeADSR, destination) {
         this.audioCtx = audioCtx;
         this.frequency = frequency;
 
@@ -14,6 +14,16 @@ export class Voice {
         // create oscillators for this voice
         this.oscillators = oscillators.map((oscillator) => {
             const osc = oscillator.createOscillator(frequency);
+            osc.osc.start();
+            osc.gain.connect(this.voiceGain);
+            return osc;
+        });
+
+        this.subOscillators = subOscillators.map((oscillator, i) => {
+            // need to use exactly OscillatorModule here for detune value,
+            // as the oscillator itself may have not yet set it (with time)
+            const subFrequency = getSubOscFrequency(frequency, oscillators[i].detune);
+            const osc = oscillator.createOscillator(subFrequency);
             osc.osc.start();
             osc.gain.connect(this.voiceGain);
             return osc;
@@ -48,13 +58,13 @@ export class Voice {
     }
 
     stop() {
-        this.oscillators.forEach((osc) => osc.osc.stop());
+        [...this.oscillators, ...this.subOscillators].forEach((o) => o.osc.stop());
     }
 
     connectLfo(lfo, mode) {
         switch (mode) {
             case "vibrato":
-                this.oscillators.forEach((osc) => {
+                [...this.oscillators, ...this.subOscillators].forEach((osc) => {
                     lfo.connect(osc.frequencyBus.input);
                 });
                 break;
@@ -62,7 +72,7 @@ export class Voice {
                 lfo.connect(this.ampBus.input.gain);
                 break;
             case "pwm":
-                this.oscillators.forEach((osc) => {
+                [...this.oscillators, ...this.subOscillators].forEach((osc) => {
                     lfo.connect(osc.pulseWidthBus.input);
                 });
                 break;
@@ -74,7 +84,7 @@ export class Voice {
     disconnectLfo(lfo, mode) {
         switch (mode) {
             case "vibrato":
-                this.oscillators.forEach((osc) => {
+                [...this.oscillators, ...this.subOscillators].forEach((osc) => {
                     lfo.disconnect(osc.frequencyBus.input);
                 });
                 break;
@@ -82,7 +92,7 @@ export class Voice {
                 lfo.disconnect(this.ampBus.input.gain);
                 break;
             case "pwm":
-                this.oscillators.forEach((osc) => {
+                [...this.oscillators, ...this.subOscillators].forEach((osc) => {
                     lfo.disconnect(osc.pulseWidthBus.input);
                 });
                 break;
@@ -139,12 +149,27 @@ export class Voice {
         });
     }
 
+    setSubWaveform(index, waveform) {
+        this.subOscillators[index].osc.type = waveform;
+    }
+
     setLevel(index, level) {
         setSmoothLevel(this.oscillators[index].gain.gain, this.audioCtx.currentTime, level);
     }
 
+    setSubLevel(index, level) {
+        setSmoothLevel(this.subOscillators[index].gain.gain, this.audioCtx.currentTime, level);
+    }
+
     setDetune(index, detune) {
         this.oscillators[index].osc.detune.setValueAtTime(detune, this.audioCtx.currentTime);
+
+        // we can't just change sub osc detune here, so calculate correct frequency
+        const subFrequency = getSubOscFrequency(this.frequency, detune);
+        this.subOscillators[index].osc.frequency.setValueAtTime(
+            subFrequency,
+            this.audioCtx.currentTime
+        );
     }
 
     setPulseWidth(index, pulseWidth) {

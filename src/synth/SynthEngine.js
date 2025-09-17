@@ -6,8 +6,7 @@ import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
-// TODO: osc param setters are a mess and live in several classes
-// TODO: other variant of filter envelope?
+// TODO: phase drift issue?
 
 export class SynthEngine {
     constructor() {
@@ -38,6 +37,7 @@ export class SynthEngine {
             new OscillatorModule(this.audioCtx),
             new OscillatorModule(this.audioCtx),
         ];
+        this.subOscillators = [new OscillatorModule(this.audioCtx)];
         this.lpf = new LPFModule(this.audioCtx);
         this.reverb = new ReverbModule(this.audioCtx);
         this.distortion = new DistortionModule(this.audioCtx);
@@ -73,6 +73,7 @@ export class SynthEngine {
             this.audioCtx,
             frequency,
             this.oscillators,
+            this.subOscillators,
             this.envelopeADSR,
             this.lpf.input
         );
@@ -116,11 +117,27 @@ export class SynthEngine {
         }
     }
 
+    setSubWaveform(oscIndex, waveform) {
+        this.subOscillators[oscIndex].setWaveform(waveform);
+
+        for (const voice of this.activeVoices.values()) {
+            voice.setSubWaveform(oscIndex, waveform);
+        }
+    }
+
     setLevel(oscIndex, level) {
         this.oscillators[oscIndex].setLevel(level);
 
         for (const voice of this.activeVoices.values()) {
             voice.setLevel(oscIndex, level);
+        }
+    }
+
+    setSubLevel(oscIndex, level) {
+        this.subOscillators[oscIndex].setLevel(level);
+
+        for (const voice of this.activeVoices.values()) {
+            voice.setSubLevel(oscIndex, level);
         }
     }
 
