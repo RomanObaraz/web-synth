@@ -166,7 +166,7 @@ export class Voice {
 
         // we can't just change sub osc detune here, so calculate correct frequency
         const subFrequency = getSubOscFrequency(this.frequency, detune);
-        this.subOscillators[index].osc.frequency.setValueAtTime(
+        this.subOscillators[index]?.osc.frequency.setValueAtTime(
             subFrequency,
             this.audioCtx.currentTime
         );

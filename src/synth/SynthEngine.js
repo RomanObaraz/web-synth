@@ -7,6 +7,7 @@ import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
 // TODO: phase drift issue?
+// TODO: weird bug with a lot of sound artifacts appearing when using the app for a long time without page refreshes
 
 export class SynthEngine {
     constructor() {
