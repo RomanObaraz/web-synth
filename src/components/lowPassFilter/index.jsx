@@ -1,7 +1,8 @@
-import { Slider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { LpfEnvelope } from "./lpfEnvelope";
+import { KnobFrequency } from "../knobs/KnobFrequency";
+import { KnobLinear } from "../knobs/KnobLinear";
 
 export const LowPassFilter = () => {
     const [cutoff, setCutoff] = useState(20000);
@@ -18,21 +19,14 @@ export const LowPassFilter = () => {
 
     return (
         <div>
-            <Typography>Cutoff: {cutoff}</Typography>
-            <Slider
-                value={cutoff}
-                min={100}
-                max={20000}
-                step={1}
-                onChange={(e) => setCutoff(e.target.value)}
-            />
-            <Typography>Resonance: {resonance}</Typography>
-            <Slider
-                value={resonance}
-                min={0.1}
-                max={20}
-                step={0.1}
-                onChange={(e) => setResonance(e.target.value)}
+            <KnobFrequency label="Cutoff" onValueRawChange={(v) => setCutoff(v)} />
+            <KnobLinear
+                label="Resonance"
+                valueDefault={1}
+                valueMin={0.1}
+                valueMax={20}
+                valueDisplayUnit=""
+                onValueRawChange={(v) => setResonance(v)}
             />
 
             <LpfEnvelope />

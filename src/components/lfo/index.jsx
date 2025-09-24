@@ -6,39 +6,38 @@ import {
     Radio,
     RadioGroup,
     Select,
-    Slider,
     Tooltip,
-    Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
+import { KnobLinear } from "../knobs/KnobLinear";
+import { KnobFrequency } from "../knobs/KnobFrequency";
 
 const depthRangeOptions = {
     vibrato: {
         min: 0,
         max: 100,
-        step: 1,
         default: 5,
     },
     tremolo: {
         min: 0,
-        max: 1,
-        step: 0.1,
-        default: 0.5,
+        max: 100,
+        default: 50,
     },
     wah: {
         min: 0,
         max: 5000,
-        step: 1,
         default: 100,
     },
     pwm: {
         min: 0,
-        max: 0.9,
-        step: 0.01,
-        default: 0.4,
+        max: 100,
+        default: 40,
     },
 };
+
+// TODO: Knobs don't reset to default value on lfoMode change
+// TODO: create a state for depthRangeDefault?
 
 export default function LFO() {
     const [waveform, setWaveform] = useState("sine");
@@ -66,8 +65,9 @@ export default function LFO() {
     }, [synth, rate]);
 
     useEffect(() => {
-        synth.lfo.setDepth(depth);
-    }, [synth, depth]);
+        const correctedDepth = lfoMode === "tremolo" || lfoMode === "pwm" ? depth / 100 : depth;
+        synth.lfo.setDepth(correctedDepth);
+    }, [synth, depth, lfoMode]);
 
     useEffect(() => {
         synth.setLfoMode(lfoMode);
@@ -77,11 +77,12 @@ export default function LFO() {
         <div className="flex justify-center items-center gap-8">
             <div className="w-full">
                 <FormControl fullWidth>
-                    <InputLabel id="wave">Wave</InputLabel>
+                    <InputLabel id="wave-lfo-label">Wave</InputLabel>
                     <Select
-                        labelId="wave"
-                        value={waveform}
+                        id="wave-lfo"
+                        labelId="wave-lfo-label"
                         label="Wave"
+                        value={waveform}
                         onChange={(e) => setWaveform(e.target.value)}
                     >
                         <MenuItem value="sine">Sine</MenuItem>
@@ -90,22 +91,33 @@ export default function LFO() {
                         <MenuItem value="sawtooth">Sawtooth</MenuItem>
                     </Select>
                 </FormControl>
-                <Typography>Rate: {rate}</Typography>
-                <Slider
-                    value={rate}
-                    min={0}
-                    max={20}
-                    step={0.1}
-                    onChange={(e) => setRate(e.target.value)}
+
+                <KnobLinear
+                    label="Rate"
+                    valueDefault={2}
+                    valueMax={20}
+                    valueDisplayUnit=""
+                    onValueRawChange={(v) => setRate(v)}
                 />
-                <Typography>Depth: {depth}</Typography>
-                <Slider
-                    value={depth}
-                    min={depthRange.min}
-                    max={depthRange.max}
-                    step={depthRange.step}
-                    onChange={(e) => setDepth(e.target.value)}
-                />
+
+                {lfoMode === "wah" ? (
+                    <KnobFrequency
+                        label="Depth"
+                        valueDefault={depthRange.default}
+                        valueMin={depthRange.min}
+                        valueMax={depthRange.max}
+                        valueCenter={500}
+                        onValueRawChange={(v) => setDepth(v)}
+                    />
+                ) : (
+                    <KnobLinear
+                        label="Depth"
+                        valueDefault={depthRange.default}
+                        valueMin={depthRange.min}
+                        valueMax={depthRange.max}
+                        onValueRawChange={(v) => setDepth(v)}
+                    />
+                )}
             </div>
 
             <FormControl>

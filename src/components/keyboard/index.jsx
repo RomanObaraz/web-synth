@@ -1,6 +1,6 @@
 import { useKeyboard } from "../../hooks/useKeyboard";
 import { getKeyFrequency, keyMidiMap } from "../../synth/keyboardMap";
-import { Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 

@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { FormControl, InputLabel, MenuItem, Select, Slider, Typography } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useSynth } from "../../hooks/useSynth";
+import { KnobLinear } from "../knobs/KnobLinear";
 
 export const Oscillator = ({ id }) => {
     const [waveform, setWaveform] = useState("sawtooth");
     const [level, setLevel] = useState(10);
     const [detune, setDetune] = useState(0);
-    const [pulseWidth, setPulseWidth] = useState(0.5);
+    const [pulseWidth, setPulseWidth] = useState(50);
 
     const { synth } = useSynth();
 
@@ -23,17 +24,18 @@ export const Oscillator = ({ id }) => {
     }, [synth, id, detune]);
 
     useEffect(() => {
-        synth.setPulseWidth(id, pulseWidth);
+        synth.setPulseWidth(id, pulseWidth / 100);
     }, [synth, id, pulseWidth]);
 
     return (
-        <div>
+        <>
             <FormControl fullWidth>
-                <InputLabel id="wave">Wave</InputLabel>
+                <InputLabel id={`wave-oscillator-label-${id}`}>Wave</InputLabel>
                 <Select
-                    labelId="wave"
-                    value={waveform}
+                    id={`wave-oscillator-${id}`}
+                    labelId={`wave-oscillator-label-${id}`}
                     label="Wave"
+                    value={waveform}
                     onChange={(e) => setWaveform(e.target.value)}
                 >
                     <MenuItem value="sine">Sine</MenuItem>
@@ -43,42 +45,27 @@ export const Oscillator = ({ id }) => {
                 </Select>
             </FormControl>
 
-            <div>
-                <Typography gutterBottom>Level: {level}</Typography>
-                <Slider
-                    value={level}
-                    min={0}
-                    max={100}
-                    step={1}
-                    onChange={(e) => setLevel(e.target.value)}
-                />
-            </div>
+            <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
 
-            <div>
-                <Typography gutterBottom>Detune: {detune}</Typography>
-                <Slider
-                    value={detune}
-                    min={-100}
-                    max={100}
-                    step={1}
-                    marks={[{ value: 0 }]}
-                    onChange={(e) => setDetune(e.target.value)}
-                />
-            </div>
+            <KnobLinear
+                label="Detune"
+                valueDefault={0}
+                valueMin={-100}
+                valueMax={100}
+                valueDisplayUnit=" cents"
+                onValueRawChange={(v) => setDetune(Math.round(v))}
+            />
 
             {waveform === "pulse" && (
-                <div>
-                    <Typography gutterBottom>Pulse width: {pulseWidth}</Typography>
-                    <Slider
-                        value={pulseWidth}
-                        min={0.05}
-                        max={0.95}
-                        step={0.01}
-                        marks={[{ value: 0.5 }]}
-                        onChange={(e) => setPulseWidth(e.target.value)}
-                    />
-                </div>
+                <KnobLinear
+                    label="Pulse width"
+                    valueDefault={50}
+                    valueMin={5}
+                    valueMax={95}
+                    valueDisplayRoundPrecision={2}
+                    onValueRawChange={(v) => setPulseWidth(Number(v.toFixed(2)))}
+                />
             )}
-        </div>
+        </>
     );
 };

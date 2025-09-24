@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { FormControl, InputLabel, MenuItem, Select, Slider, Typography } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useSynth } from "../../hooks/useSynth";
+import { KnobLinear } from "../knobs/KnobLinear";
 
 export const SubOscillator = ({ id }) => {
     const [waveform, setWaveform] = useState("square");
@@ -17,31 +18,24 @@ export const SubOscillator = ({ id }) => {
     }, [synth, id, level]);
 
     return (
-        <div>
+        <>
             <FormControl fullWidth>
-                <InputLabel id="wave">Wave</InputLabel>
+                <InputLabel id={`wave-subOscillator-label-${id}`}>Wave</InputLabel>
                 <Select
-                    labelId="wave"
-                    value={waveform}
+                    id={`wave-subOscillator-${id}`}
+                    labelId={`wave-subOscillator-label-${id}`}
                     label="Wave"
+                    value={waveform}
                     onChange={(e) => setWaveform(e.target.value)}
                 >
                     <MenuItem value="sine">Sine</MenuItem>
                     <MenuItem value="square">Square</MenuItem>
                     <MenuItem value="triangle">Triangle</MenuItem>
+                    <MenuItem value="sawtooth">Sawtooth</MenuItem>
                 </Select>
             </FormControl>
 
-            <div>
-                <Typography gutterBottom>Level: {level}</Typography>
-                <Slider
-                    value={level}
-                    min={0}
-                    max={100}
-                    step={1}
-                    onChange={(e) => setLevel(e.target.value)}
-                />
-            </div>
-        </div>
+            <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
+        </>
     );
 };

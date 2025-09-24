@@ -13,7 +13,7 @@ export class LPFModule extends BaseModule {
         this.setResonance(1);
         this.baseCutoff.start();
 
-        this.envAmount = this.audioCtx.createGain();
+        this.envDepth = this.audioCtx.createGain();
 
         this.envelope = new Envelope(this.audioCtx, {
             attack: 0,
@@ -33,8 +33,8 @@ export class LPFModule extends BaseModule {
 
     route() {
         this.baseCutoff.connect(this.cutoffBus.input);
-        this.envelope.connect(this.envAmount);
-        this.envAmount.connect(this.cutoffBus.input);
+        this.envelope.connect(this.envDepth);
+        this.envDepth.connect(this.cutoffBus.input);
         this.cutoffBus.connect(this.cutoffClamp);
         this.cutoffClamp.connect(this.filter.frequency);
         this.input.connect(this.filter).connect(this.output);
@@ -56,8 +56,8 @@ export class LPFModule extends BaseModule {
         this.filter.Q.setValueAtTime(resonance, this.audioCtx.currentTime);
     }
 
-    setEnvAmount(envAmount) {
-        this.envAmount.gain.setValueAtTime(envAmount, this.audioCtx.currentTime);
+    setEnvDepth(envDepth) {
+        this.envDepth.gain.setValueAtTime(envDepth, this.audioCtx.currentTime);
     }
 
     setADSR(adsr) {

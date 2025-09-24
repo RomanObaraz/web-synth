@@ -1,19 +1,20 @@
-import { Slider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
+import { KnobTime } from "../knobs/KnobTime";
+import { KnobLinear } from "../knobs/KnobLinear";
 
 export const LpfEnvelope = () => {
-    const [envAmount, setEnvAmount] = useState(0);
+    const [envDepth, setEnvDepth] = useState(0);
     const [attack, setAttack] = useState(0);
     const [decay, setDecay] = useState(0);
-    const [sustain, setSustain] = useState(1);
+    const [sustain, setSustain] = useState(100);
     const [release, setRelease] = useState(0.1);
 
     const { synth } = useSynth();
 
     useEffect(() => {
-        synth.lpf.setEnvAmount(envAmount);
-    }, [synth, envAmount]);
+        synth.lpf.setEnvDepth(envDepth);
+    }, [synth, envDepth]);
 
     useEffect(() => {
         synth.lpf.setADSR({ attack });
@@ -24,7 +25,7 @@ export const LpfEnvelope = () => {
     }, [synth, decay]);
 
     useEffect(() => {
-        synth.lpf.setADSR({ sustain });
+        synth.lpf.setADSR({ sustain: sustain / 100 });
     }, [synth, sustain]);
 
     useEffect(() => {
@@ -33,46 +34,21 @@ export const LpfEnvelope = () => {
 
     return (
         <>
-            <Typography>Env Amount: {envAmount}</Typography>
-            <Slider
-                value={envAmount}
-                min={-2000}
-                max={2000}
-                step={10}
-                onChange={(e) => setEnvAmount(e.target.value)}
+            <KnobLinear
+                label="Env depth"
+                valueMin={-2000}
+                valueMax={2000}
+                valueDisplayUnit=" Hz"
+                onValueRawChange={(v) => setEnvDepth(v)}
             />
-            <Typography>Attack: {attack}</Typography>
-            <Slider
-                value={attack}
-                min={0}
-                max={10}
-                step={0.1}
-                onChange={(e) => setAttack(e.target.value)}
+            <KnobTime label="Attack" onValueRawChange={(v) => setAttack(v)} />
+            <KnobTime label="Decay" onValueRawChange={(v) => setDecay(v)} />
+            <KnobLinear
+                label="Sustain"
+                valueDefault={100}
+                onValueRawChange={(v) => setSustain(v)}
             />
-            <Typography>Decay: {decay}</Typography>
-            <Slider
-                value={decay}
-                min={0}
-                max={10}
-                step={0.1}
-                onChange={(e) => setDecay(e.target.value)}
-            />
-            <Typography>Sustain: {sustain}</Typography>
-            <Slider
-                value={sustain}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={(e) => setSustain(e.target.value)}
-            />
-            <Typography>Release: {release}</Typography>
-            <Slider
-                value={release}
-                min={0.1}
-                max={10}
-                step={0.1}
-                onChange={(e) => setRelease(e.target.value)}
-            />
+            <KnobTime label="Release" valueDefault={0.1} onValueRawChange={(v) => setRelease(v)} />
         </>
     );
 };

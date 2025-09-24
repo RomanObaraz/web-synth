@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
-import { Slider, Typography } from "@mui/material";
+import { KnobLinear } from "../knobs/KnobLinear";
 
 export const Distortion = () => {
     const [drive, setDrive] = useState(0);
@@ -12,27 +12,13 @@ export const Distortion = () => {
     }, [synth, drive]);
 
     useEffect(() => {
-        synth.distortion.setMix(mix);
+        synth.distortion.setMix(mix / 100);
     }, [synth, mix]);
 
     return (
-        <div>
-            <Typography>Drive: {drive}</Typography>
-            <Slider
-                value={drive}
-                min={0}
-                max={100}
-                step={1}
-                onChange={(e) => setDrive(e.target.value)}
-            />
-            <Typography>Mix: {mix}</Typography>
-            <Slider
-                value={mix}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={(e) => setMix(e.target.value)}
-            />
-        </div>
+        <>
+            <KnobLinear label="Drive" onValueRawChange={(v) => setDrive(v)} />
+            <KnobLinear label="Mix" onValueRawChange={(v) => setMix(v)} />
+        </>
     );
 };
