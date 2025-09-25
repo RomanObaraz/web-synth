@@ -23,7 +23,7 @@ export const Toggleable = ({ moduleId, label, children }) => {
                         checked={enabled}
                         icon={<CheckBoxOutlineBlank />}
                         checkedIcon={<SquareRounded />}
-                        onChange={() => handleToggle((prevEnabled) => !prevEnabled)}
+                        onChange={(e) => handleToggle(e.target.checked)}
                     />
                 </div>
             </div>
