@@ -2,6 +2,21 @@ import { useEffect, useId, useState } from "react";
 import { KnobHeadless, KnobHeadlessLabel, KnobHeadlessOutput } from "react-knob-headless";
 import { KnobBaseThumb } from "./KnobBaseThumb";
 import { mapFrom01Linear, mapTo01Linear } from "../../utils/math";
+import { styled } from "@mui/material";
+
+const StyledKnobBase = styled("div", {
+    name: "KnobBase",
+    slot: "root",
+})(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: theme.typography.fontFamily,
+    userSelect: "none",
+    WebkitUserSelect: "none",
+    outlineStyle: "none",
+}));
 
 export const KnobBase = ({
     label,
@@ -25,11 +40,7 @@ export const KnobBase = ({
     }, [valueDefault]);
 
     return (
-        <div
-            className="w-16 flex flex-col gap-0.5 justify-center items-center
-            text-xs select-none outline-none focus-within:outline-1
-            focus-within:outline-offset-4 focus-within:outline-stone-300"
-        >
+        <StyledKnobBase>
             <KnobHeadlessLabel id={labelId}>{label}</KnobHeadlessLabel>
             <KnobHeadless
                 className="relative w-16 h-16 outline-none"
@@ -52,6 +63,6 @@ export const KnobBase = ({
                 <KnobBaseThumb value01={value01} />
             </KnobHeadless>
             <KnobHeadlessOutput htmlFor={knobId}>{valueRawDisplayFn(valueRaw)}</KnobHeadlessOutput>
-        </div>
+        </StyledKnobBase>
     );
 };
