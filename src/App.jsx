@@ -19,22 +19,22 @@ function App() {
                 </div>
 
                 <div className="flex justify-center gap-10">
-                    <div className="w-80">
+                    <div>
                         <Toggleable moduleId="osc-0" label="OSC-1">
                             <Oscillator id={0} />
                         </Toggleable>
                     </div>
-                    <div className="w-80">
+                    <div>
                         <Toggleable moduleId="osc-1" label="OSC-2">
                             <Oscillator id={1} />
                         </Toggleable>
                     </div>
-                    <div className="w-80">
+                    <div className="min-w-48">
                         <Toggleable moduleId="subOscillator" label="Sub-OSC">
                             <SubOscillator id={0} />
                         </Toggleable>
                     </div>
-                    <div className="w-100">
+                    <div>
                         <Toggleable moduleId="ampEnvelope" label="Amp Envelope">
                             <AmpEnvelope />
                         </Toggleable>
@@ -42,22 +42,22 @@ function App() {
                 </div>
 
                 <div className="flex justify-center gap-10">
-                    <div className="self-center w-120">
+                    <div>
                         <Toggleable moduleId="lpf" label="LPF">
                             <LowPassFilter />
                         </Toggleable>
                     </div>
-                    <div className="self-center w-120">
+                    <div>
                         <Toggleable moduleId="reverb" label="Reverb">
                             <Reverb />
                         </Toggleable>
                     </div>
-                    <div className="self-center w-120">
+                    <div>
                         <Toggleable moduleId="distortion" label="Distortion">
                             <Distortion />
                         </Toggleable>
                     </div>
-                    <div className="self-center w-120">
+                    <div>
                         <Toggleable moduleId="lfo" label="LFO">
                             <LFO />
                         </Toggleable>

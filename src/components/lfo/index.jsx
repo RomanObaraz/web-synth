@@ -74,8 +74,8 @@ export default function LFO() {
     }, [synth, lfoMode]);
 
     return (
-        <div className="flex justify-center items-center gap-8">
-            <div className="w-full">
+        <div className="flex justify-center items-center gap-4">
+            <div className="flex flex-col gap-4">
                 <FormControl fullWidth>
                     <InputLabel id="wave-lfo-label">Wave</InputLabel>
                     <Select
@@ -92,47 +92,69 @@ export default function LFO() {
                     </Select>
                 </FormControl>
 
-                <KnobLinear
-                    label="Rate"
-                    valueDefault={2}
-                    valueMax={20}
-                    valueDisplayUnit=""
-                    onValueRawChange={(v) => setRate(v)}
-                />
-
-                {lfoMode === "wah" ? (
-                    <KnobFrequency
-                        label="Depth"
-                        valueDefault={depthRange.default}
-                        valueMin={depthRange.min}
-                        valueMax={depthRange.max}
-                        valueCenter={500}
-                        onValueRawChange={(v) => setDepth(v)}
-                    />
-                ) : (
+                <div className="flex justify-center gap-4">
                     <KnobLinear
-                        label="Depth"
-                        valueDefault={depthRange.default}
-                        valueMin={depthRange.min}
-                        valueMax={depthRange.max}
-                        onValueRawChange={(v) => setDepth(v)}
+                        label="Rate"
+                        valueDefault={2}
+                        valueMax={20}
+                        valueDisplayUnit=""
+                        onValueRawChange={(v) => setRate(v)}
                     />
-                )}
+
+                    {lfoMode === "wah" ? (
+                        <KnobFrequency
+                            label="Depth"
+                            valueDefault={depthRange.default}
+                            valueMin={depthRange.min}
+                            valueMax={depthRange.max}
+                            valueCenter={500}
+                            onValueRawChange={(v) => setDepth(v)}
+                        />
+                    ) : (
+                        <KnobLinear
+                            label="Depth"
+                            valueDefault={depthRange.default}
+                            valueMin={depthRange.min}
+                            valueMax={depthRange.max}
+                            onValueRawChange={(v) => setDepth(v)}
+                        />
+                    )}
+                </div>
             </div>
 
             <FormControl>
                 <RadioGroup value={lfoMode} onChange={(e) => handleSetLfoMode(e.target.value)}>
                     <Tooltip title="Vibrato" placement="right">
-                        <FormControlLabel value="vibrato" control={<Radio />} label="V" />
+                        <FormControlLabel
+                            className="mr-0!"
+                            value="vibrato"
+                            control={<Radio />}
+                            label="V"
+                        />
                     </Tooltip>
                     <Tooltip title="Tremolo" placement="right">
-                        <FormControlLabel value="tremolo" control={<Radio />} label="T" />
+                        <FormControlLabel
+                            className="mr-0!"
+                            value="tremolo"
+                            control={<Radio />}
+                            label="T"
+                        />
                     </Tooltip>
                     <Tooltip title="Wah" placement="right">
-                        <FormControlLabel value="wah" control={<Radio />} label="W" />
+                        <FormControlLabel
+                            className="mr-0!"
+                            value="wah"
+                            control={<Radio />}
+                            label="W"
+                        />
                     </Tooltip>
                     <Tooltip title="PWM" placement="right">
-                        <FormControlLabel value="pwm" control={<Radio />} label="P" />
+                        <FormControlLabel
+                            className="mr-0!"
+                            value="pwm"
+                            control={<Radio />}
+                            label="P"
+                        />
                     </Tooltip>
                 </RadioGroup>
             </FormControl>

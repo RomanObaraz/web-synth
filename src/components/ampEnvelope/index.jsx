@@ -33,8 +33,8 @@ export const AmpEnvelope = () => {
     }, [synth, voiceMode]);
 
     return (
-        <div className="flex justify-center items-center gap-8">
-            <div className="w-full">
+        <div className="flex justify-center items-center gap-4">
+            <div className="flex justify-center gap-4">
                 <KnobTime label="Attack" onValueRawChange={(v) => setAttack(v)} />
                 <KnobTime label="Decay" onValueRawChange={(v) => setDecay(v)} />
                 <KnobLinear
@@ -52,10 +52,20 @@ export const AmpEnvelope = () => {
             <FormControl>
                 <RadioGroup value={voiceMode} onChange={(e) => setVoiceMode(e.target.value)}>
                     <Tooltip title="Polyphonic" placement="top">
-                        <FormControlLabel value="polyphonic" control={<Radio />} label="P" />
+                        <FormControlLabel
+                            className="mr-0!"
+                            value="polyphonic"
+                            control={<Radio />}
+                            label="P"
+                        />
                     </Tooltip>
                     <Tooltip title="Retrigger" placement="bottom">
-                        <FormControlLabel value="retrigger" control={<Radio />} label="R" />
+                        <FormControlLabel
+                            className="mr-0!"
+                            value="retrigger"
+                            control={<Radio />}
+                            label="R"
+                        />
                     </Tooltip>
                 </RadioGroup>
             </FormControl>

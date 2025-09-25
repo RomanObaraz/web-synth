@@ -18,7 +18,7 @@ export const SubOscillator = ({ id }) => {
     }, [synth, id, level]);
 
     return (
-        <>
+        <div className="flex flex-col gap-4">
             <FormControl fullWidth>
                 <InputLabel id={`wave-subOscillator-label-${id}`}>Wave</InputLabel>
                 <Select
@@ -36,6 +36,6 @@ export const SubOscillator = ({ id }) => {
             </FormControl>
 
             <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
-        </>
+        </div>
     );
 };

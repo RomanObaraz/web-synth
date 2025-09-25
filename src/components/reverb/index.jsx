@@ -12,9 +12,9 @@ export const Reverb = () => {
     }, [synth, dry, wet]);
 
     return (
-        <>
+        <div className="flex justify-center gap-4">
             <KnobLinear label="Dry" valueDefault={100} onValueRawChange={(v) => setDry(v)} />
             <KnobLinear label="Wet" onValueRawChange={(v) => setWet(v)} />
-        </>
+        </div>
     );
 };

@@ -28,7 +28,7 @@ export const Oscillator = ({ id }) => {
     }, [synth, id, pulseWidth]);
 
     return (
-        <>
+        <div className="flex flex-col gap-4">
             <FormControl fullWidth>
                 <InputLabel id={`wave-oscillator-label-${id}`}>Wave</InputLabel>
                 <Select
@@ -45,27 +45,29 @@ export const Oscillator = ({ id }) => {
                 </Select>
             </FormControl>
 
-            <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
+            <div className="flex justify-center gap-4">
+                <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
 
-            <KnobLinear
-                label="Detune"
-                valueDefault={0}
-                valueMin={-100}
-                valueMax={100}
-                valueDisplayUnit=" cents"
-                onValueRawChange={(v) => setDetune(Math.round(v))}
-            />
-
-            {waveform === "pulse" && (
                 <KnobLinear
-                    label="Pulse width"
-                    valueDefault={50}
-                    valueMin={5}
-                    valueMax={95}
-                    valueDisplayRoundPrecision={2}
-                    onValueRawChange={(v) => setPulseWidth(Number(v.toFixed(2)))}
+                    label="Detune"
+                    valueDefault={0}
+                    valueMin={-100}
+                    valueMax={100}
+                    valueDisplayUnit=" cents"
+                    onValueRawChange={(v) => setDetune(Math.round(v))}
                 />
-            )}
-        </>
+
+                {waveform === "pulse" && (
+                    <KnobLinear
+                        label="PW"
+                        valueDefault={50}
+                        valueMin={5}
+                        valueMax={95}
+                        valueDisplayRoundPrecision={2}
+                        onValueRawChange={(v) => setPulseWidth(Number(v.toFixed(2)))}
+                    />
+                )}
+            </div>
+        </div>
     );
 };

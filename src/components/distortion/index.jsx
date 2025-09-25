@@ -16,9 +16,9 @@ export const Distortion = () => {
     }, [synth, mix]);
 
     return (
-        <>
+        <div className="flex justify-center gap-4">
             <KnobLinear label="Drive" onValueRawChange={(v) => setDrive(v)} />
             <KnobLinear label="Mix" onValueRawChange={(v) => setMix(v)} />
-        </>
+        </div>
     );
 };
