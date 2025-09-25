@@ -1,6 +1,7 @@
-import { Card, CardContent, Switch, Typography } from "@mui/material";
+import { Card, CardContent, Checkbox, Typography } from "@mui/material";
 import { useState } from "react";
 import { useSynth } from "../hooks/useSynth";
+import { CheckBoxOutlineBlank, SquareRounded } from "@mui/icons-material";
 
 export const Toggleable = ({ moduleId, label, children }) => {
     const [enabled, setEnabled] = useState(true);
@@ -18,7 +19,12 @@ export const Toggleable = ({ moduleId, label, children }) => {
                     <Typography>{label}</Typography>
                 </div>
                 <div className="absolute right-0">
-                    <Switch checked={enabled} onChange={(e) => handleToggle(e.target.checked)} />
+                    <Checkbox
+                        checked={enabled}
+                        icon={<CheckBoxOutlineBlank />}
+                        checkedIcon={<SquareRounded />}
+                        onChange={() => handleToggle((prevEnabled) => !prevEnabled)}
+                    />
                 </div>
             </div>
             <CardContent
