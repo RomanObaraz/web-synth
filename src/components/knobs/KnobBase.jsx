@@ -35,6 +35,11 @@ export const KnobBase = ({
     const value01 = mapTo01(valueRaw, valueMin, valueMax);
     const dragSensitivity = 0.006;
 
+    const handleDoubleClick = () => {
+        setValueRaw(valueDefault);
+        onValueRawChange(valueDefault);
+    };
+
     useEffect(() => {
         setValueRaw(valueDefault);
     }, [valueDefault]);
@@ -59,6 +64,7 @@ export const KnobBase = ({
                     onValueRawChange(v);
                     setValueRaw(v);
                 }}
+                onDoubleClick={handleDoubleClick}
             >
                 <KnobBaseThumb value01={value01} />
             </KnobHeadless>
