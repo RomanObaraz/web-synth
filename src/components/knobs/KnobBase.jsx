@@ -12,6 +12,7 @@ const StyledKnobBase = styled("div", {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    width: 80,
     fontFamily: theme.typography.fontFamily,
     userSelect: "none",
     WebkitUserSelect: "none",

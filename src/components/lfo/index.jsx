@@ -36,9 +36,6 @@ const depthRangeOptions = {
     },
 };
 
-// TODO: Knobs don't reset to default value on lfoMode change
-// TODO: create a state for depthRangeDefault?
-
 export default function LFO() {
     const [waveform, setWaveform] = useState("sine");
     const [rate, setRate] = useState(2);

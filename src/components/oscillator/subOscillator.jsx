@@ -18,7 +18,7 @@ export const SubOscillator = ({ id }) => {
     }, [synth, id, level]);
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 items-center">
             <FormControl fullWidth>
                 <InputLabel id={`wave-subOscillator-label-${id}`}>Wave</InputLabel>
                 <Select

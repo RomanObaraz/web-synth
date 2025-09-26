@@ -45,7 +45,7 @@ export const Oscillator = ({ id }) => {
                 </Select>
             </FormControl>
 
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-4 min-w-40">
                 <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
 
                 <KnobLinear
