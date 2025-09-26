@@ -1,5 +1,6 @@
-export const getKeyFrequency = (key) =>
-    noteFrequency(keyMidiMap.find((keys) => keys.key === key)?.midi);
+export const getKeyMIDI = (key) => keyMidiMap.find((keys) => keys.key === key)?.midi;
+
+export const getMIDIKey = (midi) => keyMidiMap.find((keys) => keys.midi === midi)?.key;
 
 export const keyMidiMap = [
     // (C3..B3)
@@ -125,5 +126,3 @@ export const keyMidiMap = [
         midi: 71,
     },
 ];
-
-const noteFrequency = (midi) => 440 * Math.pow(2, (midi - 69) / 12);

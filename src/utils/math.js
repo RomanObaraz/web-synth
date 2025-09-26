@@ -41,3 +41,7 @@ export const mapTo01Linear = (x, min, max) => {
 export const mapFrom01Linear = (x, min, max) => {
     return (max - min) * x + min;
 };
+
+export const MIDIToFrequency = (midi) => {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+};

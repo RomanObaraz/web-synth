@@ -1,0 +1,65 @@
+import { useEffect, useRef, useState } from "react";
+import { getMIDIKey } from "../synth/keyboardMap";
+
+export const useMIDIKeyboard = ({ onKeyDown, onKeyUp }) => {
+    const [activeKeys, setActiveKeys] = useState(new Set());
+
+    const onKeyDownRef = useRef(onKeyDown);
+    const onKeyUpRef = useRef(onKeyUp);
+
+    useEffect(() => {
+        onKeyDownRef.current = onKeyDown;
+        onKeyUpRef.current = onKeyUp;
+    }, [onKeyDown, onKeyUp]);
+
+    useEffect(() => {
+        let midiAccess;
+
+        const handleMIDIMessage = (message) => {
+            const [status, note] = message.data;
+            const command = status & 0xf0;
+            const key = getMIDIKey(note) || note;
+
+            if (command === 0x90) {
+                // note On
+                setActiveKeys((prev) => {
+                    if (prev.has(key)) return prev;
+
+                    onKeyDownRef.current(note);
+
+                    const newSet = new Set(prev);
+                    newSet.add(key);
+                    return newSet;
+                });
+            } else if (command === 0x80) {
+                // note Off
+                setActiveKeys((prev) => {
+                    if (!prev.has(key)) return prev;
+
+                    onKeyUpRef.current(note);
+
+                    const newSet = new Set(prev);
+                    newSet.delete(key);
+                    return newSet;
+                });
+            }
+        };
+
+        navigator.requestMIDIAccess().then((midi) => {
+            midiAccess = midi;
+            for (const input of midi.inputs.values()) {
+                input.addEventListener("midimessage", handleMIDIMessage);
+            }
+        });
+
+        return () => {
+            if (midiAccess) {
+                for (const input of midiAccess.inputs.values()) {
+                    input.removeEventListener("midimessage", handleMIDIMessage);
+                }
+            }
+        };
+    }, []);
+
+    return activeKeys;
+};

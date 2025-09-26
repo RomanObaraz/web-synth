@@ -1,34 +1,48 @@
 import { useKeyboard } from "../../hooks/useKeyboard";
-import { getKeyFrequency, keyMidiMap } from "../../synth/keyboardMap";
+import { getKeyMIDI, keyMidiMap } from "../../synth/keyboardMap";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
+import { MIDIToFrequency } from "../../utils/math";
+import { useMIDIKeyboard } from "../../hooks/useMIDIKeyboard";
 
 export const Keyboard = () => {
-    const [activeVoices, setActiveVoices] = useState({});
+    const [_, setActiveVoices] = useState({});
     const { synth } = useSynth();
 
     const onKeyDown = (key) => {
-        const frequency = getKeyFrequency(key);
-        if (frequency && !activeVoices[key]) {
+        const midi = typeof key === "string" ? getKeyMIDI(key) : key;
+        const frequency = MIDIToFrequency(midi);
+        if (!frequency) return;
+
+        setActiveVoices((prev) => {
+            if (prev[midi]) return prev;
             const voiceId = synth.playNote(frequency);
-            setActiveVoices((prev) => ({ ...prev, [key]: voiceId }));
-        }
+            return { ...prev, [midi]: voiceId };
+        });
     };
 
     const onKeyUp = (key) => {
-        const voiceId = activeVoices[key];
-        if (voiceId !== undefined) {
+        const midi = typeof key === "string" ? getKeyMIDI(key) : key;
+
+        setActiveVoices((prev) => {
+            const voiceId = prev[midi];
+            if (!voiceId) return prev;
+
             synth.stopNote(voiceId);
-            setActiveVoices((prev) => {
-                const copy = { ...prev };
-                delete copy[key];
-                return copy;
-            });
-        }
+
+            const copy = { ...prev };
+            delete copy[midi];
+            return copy;
+        });
     };
 
-    const activeKeys = useKeyboard({
+    const activeKeysKeyboard = useKeyboard({
+        onKeyDown,
+        onKeyUp,
+    });
+
+    const activeKeysMIDI = useMIDIKeyboard({
         onKeyDown,
         onKeyUp,
     });
@@ -54,7 +68,11 @@ export const Keyboard = () => {
                             onPointerLeave={(e) => {
                                 if (e.buttons & 1) onKeyUp(key.key);
                             }}
-                            variant={activeKeys.has(key.key) ? "contained" : "outlined"}
+                            variant={
+                                activeKeysKeyboard.has(key.key) || activeKeysMIDI.has(key.key)
+                                    ? "contained"
+                                    : "outlined"
+                            }
                         >
                             {key.key}
                         </Button>

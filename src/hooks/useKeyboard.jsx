@@ -1,29 +1,41 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
     const [activeKeys, setActiveKeys] = useState(new Set());
 
+    const onKeyDownRef = useRef(onKeyDown);
+    const onKeyUpRef = useRef(onKeyUp);
+
     useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (activeKeys.has(e.key)) return;
+        onKeyDownRef.current = onKeyDown;
+        onKeyUpRef.current = onKeyUp;
+    }, [onKeyDown, onKeyUp]);
 
-            const keySet = new Set(activeKeys);
-            keySet.add(e.key);
-            setActiveKeys(keySet);
+    const handleKeyDown = useCallback((e) => {
+        setActiveKeys((prev) => {
+            if (prev.has(e.key)) return prev;
 
-            onKeyDown(e.key);
-        };
+            onKeyDownRef.current(e.key);
 
-        const handleKeyUp = (e) => {
-            if (!activeKeys.has(e.key)) return;
+            const newSet = new Set(prev);
+            newSet.add(e.key);
+            return newSet;
+        });
+    }, []);
 
-            const keySet = new Set(activeKeys);
-            keySet.delete(e.key);
-            setActiveKeys(keySet);
+    const handleKeyUp = useCallback((e) => {
+        setActiveKeys((prev) => {
+            if (!prev.has(e.key)) return prev;
 
-            onKeyUp(e.key);
-        };
+            onKeyUpRef.current(e.key);
 
+            const newSet = new Set(prev);
+            newSet.delete(e.key);
+            return newSet;
+        });
+    }, []);
+
+    useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
 
@@ -31,7 +43,7 @@ export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keyup", handleKeyUp);
         };
-    }, [activeKeys, onKeyDown, onKeyUp]);
+    }, [handleKeyDown, handleKeyUp]);
 
     return activeKeys;
 };
