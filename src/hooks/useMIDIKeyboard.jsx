@@ -16,6 +16,11 @@ export const useMIDIKeyboard = ({ onKeyDown, onKeyUp }) => {
         let midiAccess;
 
         const handleMIDIMessage = (message) => {
+            /*
+             * status encodes both the command (upper 4 bits) and channel (lower 4 bits)
+             * 0xf0 is a bitmask (11110000)
+             * doing status & 0xf0 removes the channel info, leaving only the command
+             */
             const [status, note] = message.data;
             const command = status & 0xf0;
             const key = getMIDIKey(note) || note;
