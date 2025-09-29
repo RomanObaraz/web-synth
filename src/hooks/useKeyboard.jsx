@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
-    const [activeKeys, setActiveKeys] = useState(new Set());
-
     const onKeyDownRef = useRef(onKeyDown);
     const onKeyUpRef = useRef(onKeyUp);
 
@@ -11,31 +9,15 @@ export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
         onKeyUpRef.current = onKeyUp;
     }, [onKeyDown, onKeyUp]);
 
-    const handleKeyDown = useCallback((e) => {
-        setActiveKeys((prev) => {
-            if (prev.has(e.key)) return prev;
-
-            onKeyDownRef.current(e.key);
-
-            const newSet = new Set(prev);
-            newSet.add(e.key);
-            return newSet;
-        });
-    }, []);
-
-    const handleKeyUp = useCallback((e) => {
-        setActiveKeys((prev) => {
-            if (!prev.has(e.key)) return prev;
-
-            onKeyUpRef.current(e.key);
-
-            const newSet = new Set(prev);
-            newSet.delete(e.key);
-            return newSet;
-        });
-    }, []);
-
     useEffect(() => {
+        const handleKeyDown = (e) => {
+            onKeyDownRef.current(e.key);
+        };
+
+        const handleKeyUp = (e) => {
+            onKeyUpRef.current(e.key);
+        };
+
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
 
@@ -43,7 +25,5 @@ export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keyup", handleKeyUp);
         };
-    }, [handleKeyDown, handleKeyUp]);
-
-    return activeKeys;
+    }, []);
 };

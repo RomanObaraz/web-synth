@@ -1,5 +1,5 @@
 import { useKeyboard } from "../../hooks/useKeyboard";
-import { getKeyMIDI, keyMidiMap } from "../../synth/keyboardMap";
+import { getKeyMIDI, getMIDIKey, keyMidiMap } from "../../synth/keyboardMap";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
@@ -7,23 +7,41 @@ import { MIDIToFrequency } from "../../utils/math";
 import { useMIDIKeyboard } from "../../hooks/useMIDIKeyboard";
 
 export const Keyboard = () => {
+    const [activeKeys, setActiveKeys] = useState(new Set());
     const [_, setActiveVoices] = useState({});
     const { synth } = useSynth();
 
-    const onKeyDown = (key) => {
-        const midi = typeof key === "string" ? getKeyMIDI(key) : key;
-        const frequency = MIDIToFrequency(midi);
-        if (!frequency) return;
+    const handleKeyDown = (input) => {
+        const { key, midi } = normalizeKey(input);
+        if (!midi) return;
+
+        setActiveKeys((prev) => {
+            if (prev.has(key)) return prev;
+
+            const newSet = new Set(prev);
+            newSet.add(key);
+            return newSet;
+        });
 
         setActiveVoices((prev) => {
             if (prev[midi]) return prev;
+            const frequency = MIDIToFrequency(midi);
             const voiceId = synth.playNote(frequency);
             return { ...prev, [midi]: voiceId };
         });
     };
 
-    const onKeyUp = (key) => {
-        const midi = typeof key === "string" ? getKeyMIDI(key) : key;
+    const handleKeyUp = (input) => {
+        const { key, midi } = normalizeKey(input);
+        if (!midi) return;
+
+        setActiveKeys((prev) => {
+            if (!prev.has(key)) return prev;
+
+            const newSet = new Set(prev);
+            newSet.delete(key);
+            return newSet;
+        });
 
         setActiveVoices((prev) => {
             const voiceId = prev[midi];
@@ -37,14 +55,14 @@ export const Keyboard = () => {
         });
     };
 
-    const activeKeysKeyboard = useKeyboard({
-        onKeyDown,
-        onKeyUp,
+    useKeyboard({
+        onKeyDown: handleKeyDown,
+        onKeyUp: handleKeyUp,
     });
 
-    const activeKeysMIDI = useMIDIKeyboard({
-        onKeyDown,
-        onKeyUp,
+    useMIDIKeyboard({
+        onKeyDown: handleKeyDown,
+        onKeyUp: handleKeyUp,
     });
 
     return (
@@ -63,16 +81,12 @@ export const Keyboard = () => {
                             }}
                             className="flex !items-end"
                             key={`keyboardKey - ${i}`}
-                            onPointerDown={() => onKeyDown(key.key)}
-                            onPointerUp={() => onKeyUp(key.key)}
+                            onPointerDown={() => handleKeyDown(key.key)}
+                            onPointerUp={() => handleKeyUp(key.key)}
                             onPointerLeave={(e) => {
-                                if (e.buttons & 1) onKeyUp(key.key);
+                                if (e.buttons & 1) handleKeyUp(key.key);
                             }}
-                            variant={
-                                activeKeysKeyboard.has(key.key) || activeKeysMIDI.has(key.key)
-                                    ? "contained"
-                                    : "outlined"
-                            }
+                            variant={activeKeys.has(key.key) ? "contained" : "outlined"}
                         >
                             {key.key}
                         </Button>
@@ -81,4 +95,15 @@ export const Keyboard = () => {
             </div>
         </>
     );
+};
+
+// helper to normalize input into consistent shape
+const normalizeKey = (input) => {
+    if (typeof input === "string") {
+        const midi = getKeyMIDI(input);
+        return { key: input, midi };
+    } else {
+        const key = getMIDIKey(input) || input;
+        return { key, midi: input };
+    }
 };

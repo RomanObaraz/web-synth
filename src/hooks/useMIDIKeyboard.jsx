@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { getMIDIKey } from "../synth/keyboardMap";
+import { useEffect, useRef } from "react";
 
 export const useMIDIKeyboard = ({ onKeyDown, onKeyUp }) => {
-    const [activeKeys, setActiveKeys] = useState(new Set());
-
     const onKeyDownRef = useRef(onKeyDown);
     const onKeyUpRef = useRef(onKeyUp);
 
@@ -21,32 +18,15 @@ export const useMIDIKeyboard = ({ onKeyDown, onKeyUp }) => {
              * 0xf0 is a bitmask (11110000)
              * doing status & 0xf0 removes the channel info, leaving only the command
              */
-            const [status, note] = message.data;
+            const [status, midi] = message.data;
             const command = status & 0xf0;
-            const key = getMIDIKey(note) || note;
 
             if (command === 0x90) {
                 // note On
-                setActiveKeys((prev) => {
-                    if (prev.has(key)) return prev;
-
-                    onKeyDownRef.current(note);
-
-                    const newSet = new Set(prev);
-                    newSet.add(key);
-                    return newSet;
-                });
+                onKeyDownRef.current(midi);
             } else if (command === 0x80) {
                 // note Off
-                setActiveKeys((prev) => {
-                    if (!prev.has(key)) return prev;
-
-                    onKeyUpRef.current(note);
-
-                    const newSet = new Set(prev);
-                    newSet.delete(key);
-                    return newSet;
-                });
+                onKeyUpRef.current(midi);
             }
         };
 
@@ -65,6 +45,4 @@ export const useMIDIKeyboard = ({ onKeyDown, onKeyUp }) => {
             }
         };
     }, []);
-
-    return activeKeys;
 };
