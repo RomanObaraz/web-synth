@@ -1,5 +1,5 @@
 export class Envelope {
-    constructor(audioCtx, { attack, decay, sustain, release }) {
+    constructor(audioCtx, { attack, decay, sustain, release, isEnabled = true }) {
         this.audioCtx = audioCtx;
 
         this.attack = attack;
@@ -12,6 +12,9 @@ export class Envelope {
         this.source.offset.value = 0;
         this.output = this.source;
         this.source.start();
+
+        this.enabled = isEnabled;
+        this.toggleBypass(!isEnabled);
     }
 
     connect(destination) {
@@ -23,6 +26,8 @@ export class Envelope {
     }
 
     triggerAttack(isRetrigger = false) {
+        if (!this.enabled) return;
+
         const now = this.audioCtx.currentTime;
         const parameter = this.source.offset;
 
@@ -46,6 +51,11 @@ export class Envelope {
         const now = this.audioCtx.currentTime;
         const parameter = this.source.offset;
 
+        if (!this.enabled) {
+            parameter.setValueAtTime(this._min, now);
+            return;
+        }
+
         parameter.cancelScheduledValues(now);
         parameter.setValueAtTime(Math.max(parameter.value, this._min), now);
 
@@ -62,5 +72,17 @@ export class Envelope {
         if (decay !== undefined) this.decay = decay;
         if (sustain !== undefined) this.sustain = sustain;
         if (release !== undefined) this.release = release;
+    }
+
+    toggleBypass(on) {
+        const now = this.audioCtx.currentTime;
+        const parameter = this.source.offset;
+
+        this.enabled = !on;
+
+        if (on) {
+            parameter.cancelScheduledValues(now);
+            parameter.setValueAtTime(1, now);
+        }
     }
 }

@@ -16,11 +16,12 @@ export class SynthEngine {
         this.masterGain = this.audioCtx.createGain();
         this.analyser = this.audioCtx.createAnalyser();
 
-        this.envelopeADSR = {
+        this.envelopeParameters = {
             attack: 0,
             decay: 0,
             sustain: 1,
             release: 0,
+            isEnabled: true,
         };
 
         this.voiceMode = "polyphonic";
@@ -75,7 +76,7 @@ export class SynthEngine {
             frequency,
             this.oscillators,
             this.subOscillators,
-            this.envelopeADSR,
+            this.envelopeParameters,
             this.lpf.input
         );
 
@@ -159,7 +160,7 @@ export class SynthEngine {
     }
 
     setEnvelopeADSR(adsr) {
-        this.envelopeADSR = { ...this.envelopeADSR, ...adsr };
+        this.envelopeParameters = { ...this.envelopeParameters, ...adsr };
 
         for (const voice of this.activeVoices.values()) {
             voice.setADSR(adsr);
@@ -211,6 +212,12 @@ export class SynthEngine {
                     this.audioCtx.currentTime,
                     bypass ? 0 : this.subOscillators[subOscIndex].level
                 );
+            }
+        } else if (moduleId === "ampEnvelope") {
+            this.envelopeParameters.isEnabled = !bypass;
+
+            for (const { ampEnvelope } of this.activeVoices.values()) {
+                ampEnvelope.toggleBypass(bypass);
             }
         } else {
             this[moduleId].toggleBypass(bypass);

@@ -3,7 +3,7 @@ import { ModulationBus } from "./ModulationBus";
 import { getSubOscFrequency, setSmoothLevel } from "./utils";
 
 export class Voice {
-    constructor(audioCtx, frequency, oscillators, subOscillators, envelopeADSR, destination) {
+    constructor(audioCtx, frequency, oscillators, subOscillators, envelopeParameters, destination) {
         this.audioCtx = audioCtx;
         this.frequency = frequency;
 
@@ -32,7 +32,7 @@ export class Voice {
         this.ampBus = new ModulationBus(audioCtx);
         this.ampBus.connect(this.voiceGain.gain);
 
-        this.ampEnvelope = new Envelope(audioCtx, envelopeADSR);
+        this.ampEnvelope = new Envelope(audioCtx, envelopeParameters);
         this.ampEnvelope.connect(this.ampBus.input);
 
         this.connectedLfos = []; // need when change to/from pulse wave drops LFOs
