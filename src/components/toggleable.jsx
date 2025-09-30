@@ -1,16 +1,18 @@
 import { Card, CardContent, Checkbox, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useSynth } from "../hooks/useSynth";
 import { CheckBoxOutlineBlank, SquareRounded } from "@mui/icons-material";
+import { useToggleStore } from "../stores/useToggleStore";
 
 export const Toggleable = ({ moduleId, label, children }) => {
-    const [enabled, setEnabled] = useState(true);
     const { setBypass } = useSynth();
 
-    const handleToggle = (on) => {
-        setEnabled(on);
-        setBypass(moduleId, !on);
-    };
+    const enabled = useToggleStore((state) => state.isEnabled(moduleId));
+    const setEnabled = useToggleStore((state) => state.setToggle);
+
+    useEffect(() => {
+        setBypass(moduleId, !enabled);
+    }, [enabled, moduleId, setBypass]);
 
     return (
         <Card className="p-4" variant="outlined">
@@ -23,7 +25,7 @@ export const Toggleable = ({ moduleId, label, children }) => {
                         checked={enabled}
                         icon={<CheckBoxOutlineBlank />}
                         checkedIcon={<SquareRounded />}
-                        onChange={(e) => handleToggle(e.target.checked)}
+                        onChange={(e) => setEnabled(moduleId, e.target.checked)}
                     />
                 </div>
             </div>
