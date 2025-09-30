@@ -30,7 +30,7 @@ function App() {
                         </Toggleable>
                     </div>
                     <div className="min-w-48">
-                        <Toggleable moduleId="subOscillator" label="Sub-OSC">
+                        <Toggleable moduleId="subOsc-0" label="Sub-OSC">
                             <SubOscillator id={0} />
                         </Toggleable>
                     </div>

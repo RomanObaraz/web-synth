@@ -200,6 +200,18 @@ export class SynthEngine {
                     bypass ? 0 : this.oscillators[oscIndex].level
                 );
             }
+        } else if (moduleId.startsWith("subOsc-")) {
+            const subOscIndex = parseInt(moduleId.split("-")[1], 10);
+
+            this.subOscillators[subOscIndex].toggleBypass(bypass);
+
+            for (const { subOscillators } of this.activeVoices.values()) {
+                setSmoothLevel(
+                    subOscillators[subOscIndex].gain.gain,
+                    this.audioCtx.currentTime,
+                    bypass ? 0 : this.subOscillators[subOscIndex].level
+                );
+            }
         } else {
             this[moduleId].toggleBypass(bypass);
         }
