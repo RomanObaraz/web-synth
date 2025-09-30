@@ -104,7 +104,7 @@ export class SynthEngine {
                 voice.stop();
                 this.activeVoices.delete(voiceId);
             }
-        }, voice.ampEnvelope.release * 1000);
+        }, voice.ampEnvelope.release * 1000 * (voice.ampEnvelope.enabled ? 1 : 0));
     }
 
     /*
