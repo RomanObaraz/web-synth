@@ -11,6 +11,8 @@ export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
 
     useEffect(() => {
         const handleKeyDown = (e) => {
+            if (e.repeat) return;
+
             onKeyDownRef.current(e.key);
         };
 
