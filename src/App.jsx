@@ -9,8 +9,11 @@ import { Distortion } from "./components/distortion";
 import { AmpEnvelope } from "./components/ampEnvelope";
 import LFO from "./components/lfo";
 import { SubOscillator } from "./components/oscillator/subOscillator";
+import { useMIDIManager } from "./hooks/useMIDIManager";
 
 function App() {
+    useMIDIManager();
+
     return (
         <SynthProvider>
             <div className="flex flex-col gap-10">

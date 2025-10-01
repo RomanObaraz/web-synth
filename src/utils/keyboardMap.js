@@ -1,7 +1,5 @@
 export const getKeyMIDI = (key) => keyMidiMap.find((keys) => keys.key === key)?.midi;
 
-export const getMIDIKey = (midi) => keyMidiMap.find((keys) => keys.midi === midi)?.key;
-
 export const keyMidiMap = [
     // (C3..B3)
     {
