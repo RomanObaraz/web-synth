@@ -1,12 +1,10 @@
 import { useKeyboard } from "../../hooks/useKeyboard";
 import { getKeyMIDI, keyMidiMap } from "../../utils/keyboardMap";
 import { Button } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { MIDIToFrequency } from "../../utils/math";
-import { useMIDIStore } from "../../stores/useMIDIStore";
-
-// TODO: so what do we think about different approaches with keyboard inputs and MIDI inputs?
+import { useMIDIKeyboard } from "../../hooks/useMIDIKeyboard";
 
 export const Keyboard = () => {
     const [activeVoices, setActiveVoices] = useState({});
@@ -51,30 +49,10 @@ export const Keyboard = () => {
         onKeyUp: handleKeyUp,
     });
 
-    useEffect(() => {
-        let prevKeys = new Set();
-
-        const unsubscribe = useMIDIStore.subscribe(
-            (state) => state.keys,
-            (currentKeys) => {
-                for (const key of currentKeys) {
-                    if (!prevKeys.has(key)) {
-                        handleKeyDown(key);
-                    }
-                }
-
-                for (const key of prevKeys) {
-                    if (!currentKeys.has(key)) {
-                        handleKeyUp(key);
-                    }
-                }
-
-                prevKeys = new Set(currentKeys);
-            }
-        );
-
-        return () => unsubscribe();
-    }, [handleKeyDown, handleKeyUp]);
+    useMIDIKeyboard({
+        onKeyDown: handleKeyDown,
+        onKeyUp: handleKeyUp,
+    });
 
     return (
         <div className="flex gap-1.5 justify-center">
