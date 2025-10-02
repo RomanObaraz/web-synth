@@ -1,22 +1,23 @@
 import { create } from "zustand";
 
 export const useVoiceStore = create((set) => ({
-    activeVoices: {},
+    activeVoices: new Map(),
 
-    addVoice: (midi, voiceId) =>
+    addVoice: ({ voiceId, midi, device }) =>
         set((state) => {
-            if (state.activeVoices[midi]) return state;
+            if (state.activeVoices.has(voiceId)) return state;
 
-            const newVoices = { ...state.activeVoices, [midi]: voiceId };
+            const newVoices = new Map(state.activeVoices);
+            newVoices.set(voiceId, { midi, device });
             return { activeVoices: newVoices };
         }),
 
-    removeVoice: (midi) =>
+    removeVoice: (voiceId) =>
         set((state) => {
-            if (!state.activeVoices[midi]) return state;
+            if (!state.activeVoices.has(voiceId)) return state;
 
-            const newVoices = { ...state.activeVoices };
-            delete newVoices[midi];
+            const newVoices = new Map(state.activeVoices);
+            newVoices.delete(voiceId);
             return { activeVoices: newVoices };
         }),
 }));

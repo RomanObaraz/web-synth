@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useKeyboard } from "../hooks/useKeyboard";
 import { useMIDIKeyboard } from "../hooks/useMIDIKeyboard";
 import { useSynth } from "../hooks/useSynth";
@@ -13,40 +12,41 @@ export const SynthController = () => {
     useKeyboard({
         onKeyDown: (key) => {
             const midi = getKeyMIDI(key);
-            if (midi) handleKeyDown(midi);
+            if (midi) handleKeyDown(midi, "keyboard");
         },
         onKeyUp: (key) => {
             const midi = getKeyMIDI(key);
-            if (midi) handleKeyUp(midi);
+            if (midi) handleKeyUp(midi, "keyboard");
         },
     });
 
     useMIDIKeyboard({
-        onKeyDown: (midi) => handleKeyDown(midi),
-        onKeyUp: (midi) => handleKeyUp(midi),
+        onKeyDown: (midi) => handleKeyDown(midi, "MIDIKeyboard"),
+        onKeyUp: (midi) => handleKeyUp(midi, "MIDIKeyboard"),
     });
 
-    const handleKeyDown = useCallback(
-        (midi) => {
-            if (!midi || activeVoices[midi]) return;
+    const handleKeyDown = (midi, device) => {
+        if (!midi) return;
 
-            const frequency = MIDIToFrequency(midi);
-            const voiceId = synth.playNote(frequency);
+        const frequency = MIDIToFrequency(midi);
+        const voiceId = synth.playNote(frequency);
+        addVoice({ voiceId, midi, device });
+    };
 
-            addVoice(midi, voiceId);
-        },
-        [activeVoices, addVoice, synth]
-    );
+    const handleKeyUp = (midi, device) => {
+        if (!midi) return;
 
-    const handleKeyUp = useCallback(
-        (midi) => {
-            if (!midi || !activeVoices[midi]) return;
+        let voiceIdToRemove = null;
+        for (const [voiceId, voice] of activeVoices.entries()) {
+            if (voice.midi === midi && voice.device === device) {
+                voiceIdToRemove = voiceId;
+                break;
+            }
+        }
 
-            const voiceId = activeVoices[midi];
-            synth.stopNote(voiceId);
+        if (!voiceIdToRemove) return;
 
-            removeVoice(midi);
-        },
-        [activeVoices, removeVoice, synth]
-    );
+        synth.stopNote(voiceIdToRemove);
+        removeVoice(voiceIdToRemove);
+    };
 };
