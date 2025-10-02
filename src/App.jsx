@@ -4,18 +4,20 @@ import { Oscilloscope } from "./components/oscilloscope";
 import { LowPassFilter } from "./components/lowPassFilter";
 import { Reverb } from "./components/reverb";
 import { Toggleable } from "./components/toggleable";
-import { SynthProvider } from "./synthProvider/synthProvider";
 import { Distortion } from "./components/distortion";
 import { AmpEnvelope } from "./components/ampEnvelope";
 import LFO from "./components/lfo";
 import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
+import { SynthController } from "./components/SynthController";
 
 function App() {
     useMIDIManager();
 
     return (
-        <SynthProvider>
+        <>
+            <SynthController />
+
             <div className="flex flex-col gap-10">
                 <div className="self-center">
                     <Oscilloscope />
@@ -69,7 +71,7 @@ function App() {
 
                 <Keyboard />
             </div>
-        </SynthProvider>
+        </>
     );
 }
 
