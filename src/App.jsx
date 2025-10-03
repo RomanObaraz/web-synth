@@ -9,14 +9,14 @@ import { AmpEnvelope } from "./components/ampEnvelope";
 import LFO from "./components/lfo";
 import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
-import { SynthController } from "./components/SynthController";
+import { InputController } from "./components/InputController";
 
 function App() {
     useMIDIManager();
 
     return (
         <>
-            <SynthController />
+            <InputController />
 
             <div className="flex flex-col gap-10">
                 <div className="self-center">

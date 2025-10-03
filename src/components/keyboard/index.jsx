@@ -1,9 +1,11 @@
+import { useNoteController } from "../../hooks/useNoteController";
 import { useVoiceStore } from "../../stores/useVoiceStore";
 import { keyMidiMap } from "../../utils/keyboardMap";
 import { Button } from "@mui/material";
 
 export const Keyboard = () => {
-    const { activeVoices, pressKey, releaseKey } = useVoiceStore();
+    const { handleKeyDown, handleKeyUp } = useNoteController();
+    const { activeVoices } = useVoiceStore();
 
     return (
         <div className="flex gap-1.5 justify-center">
@@ -20,13 +22,13 @@ export const Keyboard = () => {
                         }}
                         className="flex !items-end"
                         key={`keyboardKey - ${i}`}
-                        onPointerDown={() => pressKey(key.midi)}
-                        onPointerUp={() => releaseKey(key.midi)}
+                        onPointerDown={() => handleKeyDown(key.midi, "pointer")}
+                        onPointerUp={() => handleKeyUp(key.midi, "pointer")}
                         onPointerLeave={(e) => {
-                            if (e.buttons & 1) releaseKey(key.midi);
+                            if (e.buttons & 1) handleKeyUp(key.midi, "pointer");
                         }}
                         variant={
-                            Object.keys(activeVoices).includes(key.midi.toString())
+                            Array.from(activeVoices.values()).some((v) => v.midi === key.midi)
                                 ? "contained"
                                 : "outlined"
                         }
