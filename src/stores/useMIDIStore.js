@@ -23,7 +23,6 @@ export const useMIDIStore = create(
         togglePad: (cc, isOn) =>
             set((state) => {
                 const pads = { ...state.pads, [cc]: isOn };
-                console.log("pads updated:", pads);
                 return { pads };
             }),
     }))

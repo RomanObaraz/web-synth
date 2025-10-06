@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 import { useMIDIStore } from "../stores/useMIDIStore";
 import { useToggleStore } from "../stores/useToggleStore";
-import { ccToModuleId } from "../utils/moduleCCMap";
+import { padMap } from "../utils/padMap";
 
 // ! NOTE: use it only once in App
 
 export function useMIDIManager() {
     useEffect(() => {
         let midiAccess;
+        let midiOutput;
+
         const { pressKey, releaseKey, togglePad } = useMIDIStore.getState();
-        const { setToggle } = useToggleStore.getState();
+        const { isEnabled, setToggle } = useToggleStore.getState();
 
         const handleMIDIMessage = (message) => {
             /*
@@ -33,12 +35,10 @@ export function useMIDIManager() {
                 case 0xb0: // CC messages
                     if (midi >= 22 && midi <= 29) {
                         // pads
-                        const isOn = velocity === 127;
-                        togglePad(midi, isOn);
-
-                        // translate CC to moduleId and update persistent store
-                        const moduleId = ccToModuleId[midi];
+                        const moduleId = padMap.find((pad) => pad.cc === midi)?.moduleId;
                         if (moduleId) {
+                            const isOn = !isEnabled(moduleId);
+                            togglePad(midi, isOn);
                             setToggle(moduleId, isOn);
                         }
                     }
@@ -46,11 +46,37 @@ export function useMIDIManager() {
             }
         };
 
-        navigator.requestMIDIAccess().then((midi) => {
+        navigator.requestMIDIAccess({ sysex: true }).then((midi) => {
             midiAccess = midi;
             for (const input of midi.inputs.values()) {
                 input.addEventListener("midimessage", handleMIDIMessage);
             }
+
+            midiOutput = [...midiAccess.outputs.values()][0];
+
+            // synchronize pad LEDs and pad store with toggle store
+            const unsubscribe = useToggleStore.subscribe(
+                (state) => state.toggles,
+                (toggles) => {
+                    if (!midiOutput) return;
+
+                    for (const [moduleId, isOn] of Object.entries(toggles)) {
+                        const padInfo = padMap.find((pad) => pad.moduleId === moduleId);
+                        if (!padInfo) continue;
+
+                        const { padNumber, cc } = padInfo;
+                        sendPadLED(midiOutput, padNumber, isOn);
+                        if (cc !== undefined) {
+                            togglePad(cc, isOn);
+                        }
+                    }
+                },
+                { fireImmediately: true }
+            );
+
+            return () => {
+                unsubscribe();
+            };
         });
 
         return () => {
@@ -61,4 +87,23 @@ export function useMIDIManager() {
             }
         };
     }, []);
+}
+
+function sendPadLED(output, padNumber, on) {
+    const state = on ? 0x14 : 0x00;
+    const sysex = new Uint8Array([
+        0xf0,
+        0x00,
+        0x20,
+        0x6b,
+        0x7f,
+        0x42,
+        0x02,
+        0x00,
+        0x10,
+        padNumber,
+        state,
+        0xf7,
+    ]);
+    output.send(sysex);
 }
