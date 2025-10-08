@@ -10,7 +10,7 @@ export function useMIDIManager() {
         let midiAccess;
         let midiOutput;
 
-        const { pressKey, releaseKey, togglePad } = useMIDIStore.getState();
+        const { pressKey, releaseKey, togglePad, setKnobMIDICC } = useMIDIStore.getState();
         const { isEnabled, setToggle } = useToggleStore.getState();
 
         const handleMIDIMessage = (message) => {
@@ -41,6 +41,9 @@ export function useMIDIManager() {
                             togglePad(midi, isOn);
                             setToggle(moduleId, isOn);
                         }
+                    } else {
+                        // knobs
+                        setKnobMIDICC(midi, velocity); // normalized velocity
                     }
                     break;
             }
