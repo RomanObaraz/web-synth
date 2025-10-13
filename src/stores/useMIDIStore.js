@@ -1,10 +1,8 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { clamp, mapFrom01Linear, mapTo01Linear } from "../utils/math";
+import { clamp } from "../utils/math";
 
-const KNOB_MIN = 0;
-const KNOB_MAX = 127;
-const KNOB_CENTER = 64;
+const KNOB_CENTER = 64 / 127;
 
 export const useMIDIStore = create(
     subscribeWithSelector((set, get) => ({
@@ -32,38 +30,26 @@ export const useMIDIStore = create(
                 return { pads };
             }),
 
-        setKnobMIDICC: (cc, value) => {
+        setKnobMIDICC: (cc, normalizedValue) => {
             // handle relative #1 deltas
-            const delta = value - KNOB_CENTER;
-            const prevValue = get().knobs[cc]?.value ?? KNOB_CENTER;
-            const newValue = clamp(prevValue + delta, KNOB_MIN, KNOB_MAX);
+            const delta = normalizedValue - KNOB_CENTER;
+            const prevValue = get().knobs[cc] ?? KNOB_CENTER;
+            const newValue = clamp(prevValue + delta, 0, 1);
 
             set((state) => ({
                 knobs: {
                     ...state.knobs,
-                    [cc]: {
-                        value: newValue,
-                        normalized: mapTo01Linear(newValue, KNOB_MIN, KNOB_MAX),
-                    },
+                    [cc]: newValue,
                 },
             }));
         },
 
         // called when knob changes via UI
         setKnobValue: (cc, normalizedValue) => {
-            const newValue = clamp(
-                mapFrom01Linear(normalizedValue, KNOB_MIN, KNOB_MAX),
-                KNOB_MIN,
-                KNOB_MAX
-            );
-
             set((state) => ({
                 knobs: {
                     ...state.knobs,
-                    [cc]: {
-                        value: newValue,
-                        normalized: clamp(normalizedValue, 0, 1),
-                    },
+                    [cc]: clamp(normalizedValue, 0, 1),
                 },
             }));
         },

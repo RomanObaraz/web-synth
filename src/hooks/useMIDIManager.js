@@ -43,7 +43,7 @@ export function useMIDIManager() {
                         }
                     } else {
                         // knobs
-                        setKnobMIDICC(midi, velocity); // normalized velocity
+                        setKnobMIDICC(midi, velocity / 127); // normalized velocity
                     }
                     break;
             }
