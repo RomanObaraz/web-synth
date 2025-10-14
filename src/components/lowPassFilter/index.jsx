@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { LpfEnvelope } from "./lpfEnvelope";
 import { KnobFrequency } from "../knobs/KnobFrequency";
 import { KnobLinear } from "../knobs/KnobLinear";
+import { knobMap } from "../../utils/knobMap";
+import { useKnob } from "../../hooks/useKnob";
 
-export const LowPassFilter = () => {
-    const [cutoff, setCutoff] = useState(20000);
-    const [resonance, setResonance] = useState(1);
-    const [envDepth, setEnvDepth] = useState(0);
+export const LowPassFilter = ({ moduleId }) => {
+    const cutoffParams = knobMap[moduleId].cutoff;
+    const { value: cutoff, setValue: setCutoff } = useKnob(cutoffParams);
+
+    const resonanceParams = knobMap[moduleId].resonance;
+    const { value: resonance, setValue: setResonance } = useKnob(resonanceParams);
+
+    const envDepthParams = knobMap[moduleId].envDepth;
+    const { value: envDepth, setValue: setEnvDepth } = useKnob(envDepthParams);
 
     const { synth } = useSynth();
 
@@ -26,25 +33,27 @@ export const LowPassFilter = () => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex justify-center gap-4">
-                <KnobFrequency label="Cutoff" onValueRawChange={(v) => setCutoff(v)} />
+                <KnobFrequency label="Cutoff" value={cutoff} onValueChange={(v) => setCutoff(v)} />
                 <KnobLinear
                     label="Resonance"
-                    valueDefault={1}
-                    valueMin={0.1}
-                    valueMax={20}
+                    value={resonance}
+                    valueDefault={resonanceParams.default}
+                    valueMin={resonanceParams.min}
+                    valueMax={resonanceParams.max}
                     valueDisplayUnit=""
-                    onValueRawChange={(v) => setResonance(v)}
+                    onValueChange={(v) => setResonance(v)}
                 />
                 <KnobLinear
                     label="Env depth"
-                    valueMin={-2000}
-                    valueMax={2000}
+                    value={envDepth}
+                    valueMin={envDepthParams.min}
+                    valueMax={envDepthParams.max}
                     valueDisplayUnit=" Hz"
-                    onValueRawChange={(v) => setEnvDepth(v)}
+                    onValueChange={(v) => setEnvDepth(v)}
                 />
             </div>
 
-            <LpfEnvelope />
+            <LpfEnvelope moduleId={moduleId} />
         </div>
     );
 };

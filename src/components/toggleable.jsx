@@ -4,8 +4,9 @@ import { useSynth } from "../hooks/useSynth";
 import { CheckBoxOutlineBlank, SquareRounded } from "@mui/icons-material";
 import { useToggleStore } from "../stores/useToggleStore";
 
-export const Toggleable = ({ moduleId, label, children }) => {
+export const Toggleable = ({ label, children }) => {
     const { setBypass } = useSynth();
+    const moduleId = children.props.moduleId;
 
     const enabled = useToggleStore((state) => state.isEnabled(moduleId));
     const setEnabled = useToggleStore((state) => state.setToggle);

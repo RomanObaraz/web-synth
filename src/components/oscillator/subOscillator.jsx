@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
+import { useKnob } from "../../hooks/useKnob";
+import { knobMap } from "../../utils/knobMap";
 
-export const SubOscillator = ({ id }) => {
+export const SubOscillator = ({ id, moduleId }) => {
     const [waveform, setWaveform] = useState("square");
-    const [level, setLevel] = useState(10);
+
+    const levelParams = knobMap[moduleId].level;
+    const { value: level, setValue: setLevel } = useKnob(levelParams);
 
     const { synth } = useSynth();
 
@@ -35,7 +39,12 @@ export const SubOscillator = ({ id }) => {
                 </Select>
             </FormControl>
 
-            <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
+            <KnobLinear
+                label="Level"
+                value={level}
+                valueDefault={levelParams.default}
+                onValueChange={(v) => setLevel(v)}
+            />
         </div>
     );
 };

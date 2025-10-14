@@ -11,6 +11,10 @@ import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
 import { InputController } from "./components/InputController";
 
+// TODO: all knobs shouldn't work when module is disabled
+// TODO: KnobFrequency doesn't go well with knob cc
+// TODO: LFO's depth needs additions to it's params
+
 function App() {
     useMIDIManager();
 
@@ -25,46 +29,46 @@ function App() {
 
                 <div className="flex justify-center gap-10">
                     <div>
-                        <Toggleable moduleId="osc-0" label="OSC-1">
-                            <Oscillator id={0} />
+                        <Toggleable label="OSC-1">
+                            <Oscillator id={0} moduleId="osc-0" />
                         </Toggleable>
                     </div>
                     <div>
-                        <Toggleable moduleId="osc-1" label="OSC-2">
-                            <Oscillator id={1} />
+                        <Toggleable label="OSC-2">
+                            <Oscillator id={1} moduleId="osc-1" />
                         </Toggleable>
                     </div>
                     <div className="min-w-48">
-                        <Toggleable moduleId="subOsc-0" label="Sub-OSC">
-                            <SubOscillator id={0} />
+                        <Toggleable label="Sub-OSC">
+                            <SubOscillator id={0} moduleId="subOsc-0" />
                         </Toggleable>
                     </div>
                     <div>
-                        <Toggleable moduleId="ampEnvelope" label="Amp Envelope">
-                            <AmpEnvelope />
+                        <Toggleable label="Amp Envelope">
+                            <AmpEnvelope moduleId="ampEnvelope" />
                         </Toggleable>
                     </div>
                 </div>
 
                 <div className="flex justify-center gap-10">
                     <div>
-                        <Toggleable moduleId="lpf" label="LPF">
-                            <LowPassFilter />
+                        <Toggleable label="LPF">
+                            <LowPassFilter moduleId="lpf" />
                         </Toggleable>
                     </div>
                     <div>
-                        <Toggleable moduleId="reverb" label="Reverb">
-                            <Reverb />
+                        <Toggleable label="Reverb">
+                            <Reverb moduleId="reverb" />
                         </Toggleable>
                     </div>
                     <div>
-                        <Toggleable moduleId="distortion" label="Distortion">
-                            <Distortion />
+                        <Toggleable label="Distortion">
+                            <Distortion moduleId="distortion" />
                         </Toggleable>
                     </div>
                     <div>
-                        <Toggleable moduleId="lfo" label="LFO">
-                            <LFO />
+                        <Toggleable label="LFO">
+                            <LFO moduleId="lfo" />
                         </Toggleable>
                     </div>
                 </div>

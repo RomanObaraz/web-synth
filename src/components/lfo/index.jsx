@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { KnobFrequency } from "../knobs/KnobFrequency";
+import { knobMap } from "../../utils/knobMap";
+import { useKnob } from "../../hooks/useKnob";
 
 const depthRangeOptions = {
     vibrato: {
@@ -36,12 +38,16 @@ const depthRangeOptions = {
     },
 };
 
-export default function LFO() {
+export default function LFO({ moduleId }) {
     const [waveform, setWaveform] = useState("sine");
-    const [rate, setRate] = useState(2);
-    const [depth, setDepth] = useState(100);
     const [lfoMode, setLfoMode] = useState("wah");
     const [depthRange, setDepthRange] = useState(depthRangeOptions.wah);
+
+    const rateParams = knobMap[moduleId].rate;
+    const { value: rate, setValue: setRate } = useKnob(rateParams);
+
+    const depthParams = knobMap[moduleId].depth;
+    const { value: depth, setValue: setDepth } = useKnob(depthParams);
 
     const { synth } = useSynth();
 
@@ -92,28 +98,31 @@ export default function LFO() {
                 <div className="flex justify-center gap-4">
                     <KnobLinear
                         label="Rate"
-                        valueDefault={2}
-                        valueMax={20}
+                        value={rate}
+                        valueDefault={rateParams.default}
+                        valueMax={rateParams.max}
                         valueDisplayUnit=""
-                        onValueRawChange={(v) => setRate(v)}
+                        onValueChange={(v) => setRate(v)}
                     />
 
                     {lfoMode === "wah" ? (
                         <KnobFrequency
                             label="Depth"
+                            value={depth}
                             valueDefault={depthRange.default}
                             valueMin={depthRange.min}
                             valueMax={depthRange.max}
                             valueCenter={500}
-                            onValueRawChange={(v) => setDepth(v)}
+                            onValueChange={(v) => setDepth(v)}
                         />
                     ) : (
                         <KnobLinear
                             label="Depth"
+                            value={depth}
                             valueDefault={depthRange.default}
                             valueMin={depthRange.min}
                             valueMax={depthRange.max}
-                            onValueRawChange={(v) => setDepth(v)}
+                            onValueChange={(v) => setDepth(v)}
                         />
                     )}
                 </div>

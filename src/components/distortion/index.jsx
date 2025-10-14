@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
+import { knobMap } from "../../utils/knobMap";
+import { useKnob } from "../../hooks/useKnob";
 
-export const Distortion = () => {
-    const [drive, setDrive] = useState(0);
-    const [mix, setMix] = useState(0);
+export const Distortion = ({ moduleId }) => {
+    const driveParams = knobMap[moduleId].drive;
+    const { value: drive, setValue: setDrive } = useKnob(driveParams);
+
+    const mixParams = knobMap[moduleId].mix;
+    const { value: mix, setValue: setMix } = useKnob(mixParams);
+
     const { synth } = useSynth();
 
     useEffect(() => {
@@ -17,8 +23,8 @@ export const Distortion = () => {
 
     return (
         <div className="flex justify-center gap-4">
-            <KnobLinear label="Drive" onValueRawChange={(v) => setDrive(v)} />
-            <KnobLinear label="Mix" onValueRawChange={(v) => setMix(v)} />
+            <KnobLinear label="Drive" value={drive} onValueChange={(v) => setDrive(v)} />
+            <KnobLinear label="Mix" value={mix} onValueChange={(v) => setMix(v)} />
         </div>
     );
 };

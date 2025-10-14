@@ -2,18 +2,30 @@ import { useState, useEffect } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
+import { useKnob } from "../../hooks/useKnob";
+import { knobMap } from "../../utils/knobMap";
 
-export const Oscillator = ({ id }) => {
+export const Oscillator = ({ id, moduleId }) => {
     const [waveform, setWaveform] = useState("sawtooth");
-    const [level, setLevel] = useState(10);
-    const [detune, setDetune] = useState(0);
-    const [pulseWidth, setPulseWidth] = useState(50);
+
+    const levelParams = knobMap[moduleId].level;
+    const { value: level, setValue: setLevel } = useKnob(levelParams);
+
+    const detuneParams = knobMap[moduleId].detune;
+    const { value: detune, setValue: setDetune } = useKnob(detuneParams);
+
+    const pulseWidthParams = knobMap[moduleId].pulseWidth;
+    const { value: pulseWidth, setValue: setPulseWidth } = useKnob(pulseWidthParams);
 
     const { synth } = useSynth();
 
     useEffect(() => {
         synth.setWaveform(id, waveform);
-    }, [synth, id, waveform]);
+
+        if (waveform === "pulse") {
+            setPulseWidth(pulseWidthParams.default);
+        }
+    }, [synth, id, pulseWidthParams.default, setPulseWidth, waveform]);
 
     useEffect(() => {
         synth.setLevel(id, level / 100);
@@ -24,8 +36,10 @@ export const Oscillator = ({ id }) => {
     }, [synth, id, detune]);
 
     useEffect(() => {
-        synth.setPulseWidth(id, pulseWidth / 100);
-    }, [synth, id, pulseWidth]);
+        if (waveform === "pulse") {
+            synth.setPulseWidth(id, pulseWidth / 100);
+        }
+    }, [synth, id, waveform, pulseWidth]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -46,25 +60,32 @@ export const Oscillator = ({ id }) => {
             </FormControl>
 
             <div className="flex justify-center gap-4 min-w-40">
-                <KnobLinear label="Level" valueDefault={10} onValueRawChange={(v) => setLevel(v)} />
+                <KnobLinear
+                    label="Level"
+                    value={level}
+                    valueDefault={levelParams.default}
+                    onValueChange={(v) => setLevel(v)}
+                />
 
                 <KnobLinear
                     label="Detune"
-                    valueDefault={0}
-                    valueMin={-100}
-                    valueMax={100}
+                    value={detune}
+                    valueDefault={detuneParams.default}
+                    valueMin={detuneParams.min}
+                    valueMax={detuneParams.max}
                     valueDisplayUnit=" cents"
-                    onValueRawChange={(v) => setDetune(Math.round(v))}
+                    onValueChange={(v) => setDetune(Math.round(v))}
                 />
 
                 {waveform === "pulse" && (
                     <KnobLinear
                         label="PW"
-                        valueDefault={50}
-                        valueMin={5}
-                        valueMax={95}
+                        value={pulseWidth}
+                        valueDefault={pulseWidthParams.default}
+                        valueMin={pulseWidthParams.min}
+                        valueMax={pulseWidthParams.max}
                         valueDisplayRoundPrecision={2}
-                        onValueRawChange={(v) => setPulseWidth(Number(v.toFixed(2)))}
+                        onValueChange={(v) => setPulseWidth(Number(v.toFixed(2)))}
                     />
                 )}
             </div>
