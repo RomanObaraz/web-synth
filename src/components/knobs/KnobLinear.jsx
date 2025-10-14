@@ -1,12 +1,13 @@
+import { KnobBase } from "./KnobBase";
 import { useCallback } from "react";
-import { KnobBase } from "./knobBase";
 
 export const KnobLinear = ({
     label,
+    value,
     valueDefault = 0,
     valueMin = 0,
     valueMax = 100,
-    onValueRawChange,
+    onValueChange,
     valueDisplayRoundPrecision = 0,
     valueDisplayUnit = "%",
 }) => {
@@ -22,10 +23,11 @@ export const KnobLinear = ({
     return (
         <KnobBase
             label={label}
+            value={value}
             valueDefault={valueDefault}
             valueMin={valueMin}
             valueMax={valueMax}
-            onValueRawChange={onValueRawChange}
+            onValueChange={onValueChange}
             valueRawRoundFn={valueRawRoundFn}
             valueRawDisplayFn={valueRawDisplayFn}
         />

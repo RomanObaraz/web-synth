@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import { KnobHeadless, KnobHeadlessLabel, KnobHeadlessOutput } from "react-knob-headless";
 import { KnobBaseThumb } from "./KnobBaseThumb";
 import { mapFrom01Linear, mapTo01Linear } from "../../utils/math";
@@ -21,29 +21,24 @@ const StyledKnobBase = styled("div", {
 
 export const KnobBase = ({
     label,
+    value,
     valueDefault,
     valueMin,
     valueMax,
     valueRawRoundFn,
     valueRawDisplayFn,
-    onValueRawChange,
+    onValueChange,
     mapTo01 = mapTo01Linear,
     mapFrom01 = mapFrom01Linear,
 }) => {
-    const [valueRaw, setValueRaw] = useState(valueDefault);
     const knobId = useId();
     const labelId = useId();
-    const value01 = mapTo01(valueRaw, valueMin, valueMax);
+    const value01 = mapTo01(value, valueMin, valueMax);
     const dragSensitivity = 0.006;
 
     const handleDoubleClick = () => {
-        setValueRaw(valueDefault);
-        onValueRawChange(valueDefault);
+        onValueChange(valueDefault);
     };
-
-    useEffect(() => {
-        setValueRaw(valueDefault);
-    }, [valueDefault]);
 
     return (
         <StyledKnobBase>
@@ -54,22 +49,19 @@ export const KnobBase = ({
                 aria-labelledby={labelId}
                 valueMin={valueMin}
                 valueMax={valueMax}
-                valueRaw={valueRaw}
+                valueRaw={value}
                 valueRawRoundFn={valueRawRoundFn}
                 valueRawDisplayFn={valueRawDisplayFn}
                 dragSensitivity={dragSensitivity}
                 axis="xy"
                 mapTo01={mapTo01}
                 mapFrom01={mapFrom01}
-                onValueRawChange={(v) => {
-                    onValueRawChange(v);
-                    setValueRaw(v);
-                }}
+                onValueRawChange={onValueChange}
                 onDoubleClick={handleDoubleClick}
             >
                 <KnobBaseThumb value01={value01} />
             </KnobHeadless>
-            <KnobHeadlessOutput htmlFor={knobId}>{valueRawDisplayFn(valueRaw)}</KnobHeadlessOutput>
+            <KnobHeadlessOutput htmlFor={knobId}>{valueRawDisplayFn(value)}</KnobHeadlessOutput>
         </StyledKnobBase>
     );
 };

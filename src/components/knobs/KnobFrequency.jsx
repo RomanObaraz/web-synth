@@ -1,14 +1,15 @@
-import { KnobBase } from "./knobBase";
+import { KnobBase } from "./KnobBase";
 import { NormalisableRange } from "../../utils/math";
 import { useCallback, useMemo } from "react";
 
 export const KnobFrequency = ({
     label,
+    value,
     valueDefault = 20000,
     valueMin = 20,
     valueMax = 20000,
     valueCenter = 1000,
-    onValueRawChange,
+    onValueChange,
 }) => {
     const normalisableRange = useMemo(
         () => new NormalisableRange(valueMin, valueMax, valueCenter),
@@ -20,10 +21,11 @@ export const KnobFrequency = ({
     return (
         <KnobBase
             label={label}
+            value={value}
             valueDefault={valueDefault}
             valueMin={valueMin}
             valueMax={valueMax}
-            onValueRawChange={onValueRawChange}
+            onValueChange={onValueChange}
             valueRawRoundFn={valueRawRoundFn}
             valueRawDisplayFn={valueRawDisplayFn}
             mapTo01={mapTo01}
