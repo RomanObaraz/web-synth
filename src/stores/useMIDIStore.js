@@ -8,7 +8,7 @@ export const useMIDIStore = create(
     subscribeWithSelector((set, get) => ({
         keys: new Set(), // pressed keys (notes)
         pads: {}, // { [cc]: boolean }
-        knobs: {}, // { [cc]: { value: number (0–127), normalized: number (0–1) } }
+        knobs: {}, // { [cc]: number (0–1) }
 
         pressKey: (note) =>
             set((state) => {
