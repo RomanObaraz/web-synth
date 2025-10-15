@@ -13,7 +13,6 @@ import { InputController } from "./components/InputController";
 
 // TODO: all knobs shouldn't work when module is disabled
 // TODO: KnobFrequency doesn't go well with knob cc
-// TODO: LFO's depth needs additions to it's params
 
 function App() {
     useMIDIManager();

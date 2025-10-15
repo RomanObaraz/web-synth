@@ -15,46 +15,23 @@ import { KnobFrequency } from "../knobs/KnobFrequency";
 import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
 
-const depthRangeOptions = {
-    vibrato: {
-        min: 0,
-        max: 100,
-        default: 5,
-    },
-    tremolo: {
-        min: 0,
-        max: 100,
-        default: 50,
-    },
-    wah: {
-        min: 0,
-        max: 5000,
-        default: 100,
-    },
-    pwm: {
-        min: 0,
-        max: 100,
-        default: 40,
-    },
-};
-
 export default function LFO({ moduleId }) {
     const [waveform, setWaveform] = useState("sine");
     const [lfoMode, setLfoMode] = useState("wah");
-    const [depthRange, setDepthRange] = useState(depthRangeOptions.wah);
 
     const rateParams = knobMap[moduleId].rate;
     const { value: rate, setValue: setRate } = useKnob(rateParams);
 
     const depthParams = knobMap[moduleId].depth;
-    const { value: depth, setValue: setDepth } = useKnob(depthParams);
+    const { value: depth, setValue: setDepth } = useKnob(depthParams.wah);
+    const [depthRange, setDepthRange] = useState(depthParams.wah);
 
     const { synth } = useSynth();
 
     const handleSetLfoMode = (mode) => {
-        if (depthRangeOptions[mode]) {
-            setDepthRange(depthRangeOptions[mode]);
-            setDepth(depthRangeOptions[mode].default);
+        if (depthParams[mode]) {
+            setDepthRange(depthParams[mode]);
+            setDepth(depthParams[mode].default);
             setLfoMode(mode);
         }
     };
