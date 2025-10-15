@@ -25,7 +25,8 @@ export const Oscillator = ({ id, moduleId }) => {
         if (waveform === "pulse") {
             setPulseWidth(pulseWidthParams.default);
         }
-    }, [synth, id, pulseWidthParams.default, setPulseWidth, waveform]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [synth, id, waveform]);
 
     useEffect(() => {
         synth.setLevel(id, level / 100);
@@ -39,7 +40,8 @@ export const Oscillator = ({ id, moduleId }) => {
         if (waveform === "pulse") {
             synth.setPulseWidth(id, pulseWidth / 100);
         }
-    }, [synth, id, waveform, pulseWidth]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [synth, id, pulseWidth]);
 
     return (
         <div className="flex flex-col gap-4">
