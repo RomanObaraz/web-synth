@@ -9,6 +9,7 @@ export const useMIDIStore = create(
         keys: new Set(), // pressed keys (notes)
         pads: {}, // { [cc]: boolean }
         knobs: {}, // { [cc]: number (0–1) }
+        knobsEnabled: {}, // { [cc]: boolean }
 
         pressKey: (note) =>
             set((state) => {
@@ -36,20 +37,27 @@ export const useMIDIStore = create(
             const prevValue = get().knobs[cc] ?? KNOB_CENTER;
             const newValue = clamp(prevValue + delta, 0, 1);
 
-            set((state) => ({
-                knobs: {
-                    ...state.knobs,
-                    [cc]: newValue,
-                },
-            }));
+            set((state) => {
+                if (state.knobsEnabled[cc] === false) return {};
+
+                return { knobs: { ...state.knobs, [cc]: newValue } };
+            });
         },
 
         // called when knob changes via UI
         setKnobValue: (cc, normalizedValue) => {
+            set((state) => {
+                if (state.knobsEnabled[cc] === false) return {};
+
+                return { knobs: { ...state.knobs, [cc]: clamp(normalizedValue, 0, 1) } };
+            });
+        },
+
+        setKnobEnabled: (cc, isEnabled) => {
             set((state) => ({
-                knobs: {
-                    ...state.knobs,
-                    [cc]: clamp(normalizedValue, 0, 1),
+                knobsEnabled: {
+                    ...state.knobsEnabled,
+                    [cc]: isEnabled,
                 },
             }));
         },

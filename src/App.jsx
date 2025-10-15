@@ -11,9 +11,6 @@ import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
 import { InputController } from "./components/InputController";
 
-// TODO: all knobs shouldn't work when module is disabled
-// TODO: KnobFrequency doesn't go well with knob cc
-
 function App() {
     useMIDIManager();
 
