@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SynthContext } from "../SynthProvider/synthContext";
+import { SynthContext } from "../synthProvider/synthContext";
 
 export function useSynth() {
     return useContext(SynthContext);
