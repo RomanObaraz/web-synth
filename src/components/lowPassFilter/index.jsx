@@ -8,7 +8,7 @@ import { useKnob } from "../../hooks/useKnob";
 
 export const LowPassFilter = ({ moduleId }) => {
     const cutoffParams = knobMap[moduleId].cutoff;
-    const { value: cutoff, setValue: setCutoff } = useKnob(cutoffParams);
+    const { value: cutoff, setValue: setCutoff } = useKnob(cutoffParams, true);
 
     const resonanceParams = knobMap[moduleId].resonance;
     const { value: resonance, setValue: setResonance } = useKnob(resonanceParams);

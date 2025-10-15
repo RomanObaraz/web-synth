@@ -1,20 +1,32 @@
 import { useCallback, useEffect } from "react";
 import { useMIDIStore } from "../stores/useMIDIStore";
-import { mapFrom01Linear, mapTo01Linear } from "../utils/math";
+import { mapFrom01Linear, mapTo01Linear, NormalisableRange } from "../utils/math";
 
-export const useKnob = (params) => {
+// TODO: maybe this just has to go inside uncontrolled Knob components, idk
+
+export const useKnob = (params, isInterpolated = false) => {
     const knob = useMIDIStore((state) => state.knobs[params.cc]);
     const setKnobValue = useMIDIStore((state) => state.setKnobValue);
+    let mapTo01;
+    let mapFrom01;
 
-    const value =
-        knob !== undefined ? mapFrom01Linear(knob, params.min, params.max) : params.default;
+    if (isInterpolated) {
+        const normalisableRange = new NormalisableRange(params.min, params.max, params.center);
+        mapTo01 = (x) => normalisableRange.mapTo01(x);
+        mapFrom01 = (x) => normalisableRange.mapFrom01(x);
+    } else {
+        mapTo01 = (x, min, max) => mapTo01Linear(x, min, max);
+        mapFrom01 = (x, min, max) => mapFrom01Linear(x, min, max);
+    }
+
+    const value = knob !== undefined ? mapFrom01(knob, params.min, params.max) : params.default;
 
     const setValue = useCallback(
         (newValue) => {
-            const normalized = mapTo01Linear(newValue, params.min, params.max);
+            const normalized = mapTo01(newValue, params.min, params.max);
             setKnobValue(params.cc, normalized);
         },
-        [setKnobValue, params.cc, params.min, params.max]
+        [setKnobValue, params.cc, params.min, params.max, mapTo01]
     );
 
     useEffect(() => {

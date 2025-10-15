@@ -23,18 +23,23 @@ export default function LFO({ moduleId }) {
     const { value: rate, setValue: setRate } = useKnob(rateParams);
 
     const depthParams = knobMap[moduleId].depth;
-    const { value: depth, setValue: setDepth } = useKnob(depthParams.wah);
     const [depthRange, setDepthRange] = useState(depthParams.wah);
+    const { value: depth, setValue: setDepth } = useKnob(depthRange, lfoMode === "wah");
 
     const { synth } = useSynth();
 
     const handleSetLfoMode = (mode) => {
         if (depthParams[mode]) {
-            setDepthRange(depthParams[mode]);
-            setDepth(depthParams[mode].default);
             setLfoMode(mode);
+            setDepthRange(depthParams[mode]);
         }
     };
+
+    // this is needed to reset depth value on lfoMode change
+    useEffect(() => {
+        setDepth(depthParams[lfoMode].default);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [lfoMode]);
 
     useEffect(() => {
         synth.lfo.setWaveform(waveform);
@@ -89,7 +94,7 @@ export default function LFO({ moduleId }) {
                             valueDefault={depthRange.default}
                             valueMin={depthRange.min}
                             valueMax={depthRange.max}
-                            valueCenter={500}
+                            valueCenter={depthRange.center}
                             onValueChange={(v) => setDepth(v)}
                         />
                     ) : (
