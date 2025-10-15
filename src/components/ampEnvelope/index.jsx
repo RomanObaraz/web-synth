@@ -37,15 +37,27 @@ export const AmpEnvelope = ({ moduleId }) => {
     return (
         <div className="flex justify-center items-center gap-4">
             <div className="flex justify-center gap-4">
-                <KnobTime label="Attack" value={attack} onValueChange={(v) => setAttack(v)} />
-                <KnobTime label="Decay" value={decay} onValueChange={(v) => setDecay(v)} />
+                <KnobTime
+                    variant="warning"
+                    label="Attack"
+                    value={attack}
+                    onValueChange={(v) => setAttack(v)}
+                />
+                <KnobTime
+                    variant="warning"
+                    label="Decay"
+                    value={decay}
+                    onValueChange={(v) => setDecay(v)}
+                />
                 <KnobLinear
+                    variant="warning"
                     label="Sustain"
                     value={sustain}
                     valueDefault={knobMap[moduleId].sustain.default}
                     onValueChange={(v) => setSustain(v)}
                 />
                 <KnobTime
+                    variant="warning"
                     label="Release"
                     value={release}
                     valueDefault={knobMap[moduleId].release.default}
