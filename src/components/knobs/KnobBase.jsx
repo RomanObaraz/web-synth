@@ -20,6 +20,7 @@ const StyledKnobBase = styled("div", {
 }));
 
 export const KnobBase = ({
+    variant = "primary",
     label,
     value,
     valueDefault,
@@ -59,7 +60,7 @@ export const KnobBase = ({
                 onValueRawChange={onValueChange}
                 onDoubleClick={handleDoubleClick}
             >
-                <KnobBaseThumb value01={value01} />
+                <KnobBaseThumb variant={variant} value01={value01} />
             </KnobHeadless>
             <KnobHeadlessOutput htmlFor={knobId}>{valueRawDisplayFn(value)}</KnobHeadlessOutput>
         </StyledKnobBase>

@@ -3,6 +3,7 @@ import { NormalisableRange } from "../../utils/math";
 import { useCallback, useMemo } from "react";
 
 export const KnobTime = ({
+    variant,
     label,
     value,
     valueDefault = 0,
@@ -21,6 +22,7 @@ export const KnobTime = ({
 
     return (
         <KnobBase
+            variant={variant}
             label={label}
             value={value}
             valueDefault={valueDefault}

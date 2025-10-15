@@ -3,6 +3,7 @@ import { NormalisableRange } from "../../utils/math";
 import { useCallback, useMemo } from "react";
 
 export const KnobFrequency = ({
+    variant,
     label,
     value,
     valueDefault = 20000,
@@ -20,6 +21,7 @@ export const KnobFrequency = ({
 
     return (
         <KnobBase
+            variant={variant}
             label={label}
             value={value}
             valueDefault={valueDefault}

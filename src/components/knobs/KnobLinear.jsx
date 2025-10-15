@@ -2,6 +2,7 @@ import { KnobBase } from "./KnobBase";
 import { useCallback } from "react";
 
 export const KnobLinear = ({
+    variant,
     label,
     value,
     valueDefault = 0,
@@ -22,6 +23,7 @@ export const KnobLinear = ({
 
     return (
         <KnobBase
+            variant={variant}
             label={label}
             value={value}
             valueDefault={valueDefault}
