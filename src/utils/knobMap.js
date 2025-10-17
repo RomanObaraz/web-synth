@@ -28,8 +28,7 @@ export const knobMap = {
         release: { cc: null, min: 0, max: 10, default: 0.1, center: 2 },
     },
     reverb: {
-        dry: { cc: 77, min: 0, max: 100, default: 100 },
-        wet: { cc: 93, min: 0, max: 100, default: 0 },
+        mix: { cc: 77, min: 0, max: 100, default: 0 },
     },
     distortion: {
         drive: { cc: 73, min: 0, max: 100, default: 0 },

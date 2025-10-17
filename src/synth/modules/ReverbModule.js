@@ -3,17 +3,17 @@ import { BaseModule } from "./BaseModule";
 export class ReverbModule extends BaseModule {
     initModule() {
         this.convolver = this.audioCtx.createConvolver();
-        this.wet = this.audioCtx.createGain();
-        this.dry = this.audioCtx.createGain();
+        this.wetGain = this.audioCtx.createGain();
+        this.dryGain = this.audioCtx.createGain();
 
         this.loadImpulse();
 
-        this.setDryWet(1, 0);
+        this.setMix(0.5);
     }
 
     route() {
-        this.input.connect(this.dry).connect(this.output);
-        this.input.connect(this.convolver).connect(this.wet).connect(this.output);
+        this.input.connect(this.dryGain).connect(this.output);
+        this.input.connect(this.convolver).connect(this.wetGain).connect(this.output);
     }
 
     async loadImpulse() {
@@ -36,8 +36,8 @@ export class ReverbModule extends BaseModule {
         this.convolver.buffer = stereoBuffer;
     }
 
-    setDryWet(dry, wet) {
-        this.dry.gain.setValueAtTime(dry, this.audioCtx.currentTime);
-        this.wet.gain.setValueAtTime(wet, this.audioCtx.currentTime);
+    setMix(mix) {
+        this.dryGain.gain.setValueAtTime(1 - mix, this.audioCtx.currentTime);
+        this.wetGain.gain.setValueAtTime(mix, this.audioCtx.currentTime);
     }
 }
