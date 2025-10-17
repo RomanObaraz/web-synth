@@ -33,8 +33,7 @@ export class DistortionModule extends BaseModule {
     }
 
     setMix(mix) {
-        this.mix = mix;
-        this.dryGain.gain.setValueAtTime(1 - this.mix, this.audioCtx.currentTime);
-        this.wetGain.gain.setValueAtTime(this.mix, this.audioCtx.currentTime);
+        this.dryGain.gain.setValueAtTime(1 - mix, this.audioCtx.currentTime);
+        this.wetGain.gain.setValueAtTime(mix, this.audioCtx.currentTime);
     }
 }
