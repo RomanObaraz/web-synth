@@ -10,6 +10,7 @@ export class Voice {
         this.voiceGain = audioCtx.createGain();
         this.voiceGain.gain.value = 0;
         this.voiceGain.connect(destination);
+        this.isReleasing = false;
 
         // create oscillators for this voice
         this.oscillators = oscillators.map((oscillator) => {
@@ -54,10 +55,12 @@ export class Voice {
     }
 
     triggerRelease() {
+        this.isReleasing = true;
         this.ampEnvelope.triggerRelease();
     }
 
     stop() {
+        this.isReleasing = false;
         [...this.oscillators, ...this.subOscillators].forEach((o) => o.osc.stop());
     }
 

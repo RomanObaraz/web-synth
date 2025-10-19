@@ -11,6 +11,7 @@ export class SynthEngine {
         this.audioCtx = new AudioContext();
 
         this.masterGain = this.audioCtx.createGain();
+        this.masterLimiter = this.audioCtx.createDynamicsCompressor();
         this.analyser = this.audioCtx.createAnalyser();
 
         this.envelopeParameters = {
@@ -48,9 +49,10 @@ export class SynthEngine {
         // connection chain
         this.lpf.output.connect(this.distortion.input);
         this.distortion.output.connect(this.reverb.input);
-        this.reverb.output.connect(this.analyser);
-        this.analyser.connect(this.masterGain);
-        this.masterGain.connect(this.audioCtx.destination);
+        this.reverb.output.connect(this.masterGain);
+        this.masterGain.connect(this.masterLimiter);
+        this.masterLimiter.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
     }
 
     playNote(frequency) {
@@ -92,6 +94,8 @@ export class SynthEngine {
 
         const voiceId = Symbol();
         this.activeVoices.set(voiceId, voice);
+        this.updateMasterGain();
+
         return voiceId;
     }
 
@@ -130,6 +134,17 @@ export class SynthEngine {
             oldestVoice.stop();
             this.activeVoices.delete(oldestId);
         }, oldestVoice.ampEnvelope.release * 1000 * (oldestVoice.ampEnvelope.enabled ? 1 : 0));
+    }
+
+    // this is for loudness normalizaton when more than 1 voice active
+    updateMasterGain() {
+        const activeVoicesArray = Array.from(this.activeVoices.values()).filter(
+            (voice) => !voice.isReleasing
+        );
+        const activeVoiceCount = activeVoicesArray.length || 1;
+
+        const gain = 1 / Math.sqrt(activeVoiceCount);
+        setSmoothLevel(this.masterGain.gain, this.audioCtx.currentTime, gain);
     }
 
     /*
