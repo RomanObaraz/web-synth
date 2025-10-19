@@ -6,9 +6,6 @@ import { ReverbModule } from "./modules/ReverbModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
-// TODO: phase drift issue?
-// TODO: weird bug with a lot of sound artifacts appearing when using the app for a long time without page refreshes
-
 export class SynthEngine {
     constructor() {
         this.audioCtx = new AudioContext();
@@ -26,6 +23,8 @@ export class SynthEngine {
 
         this.voiceMode = "polyphonic";
         this.activeVoices = new Map();
+
+        this.MAX_POLYPHONY = 16;
     }
 
     async init() {
@@ -70,7 +69,14 @@ export class SynthEngine {
             }
         }
 
-        // polyphonic (new voice))
+        // polyphonic
+
+        // check limit
+        if (this.activeVoices.size >= this.MAX_POLYPHONY) {
+            this.stealOldestVoice();
+        }
+
+        // (new voice))
         const voice = new Voice(
             this.audioCtx,
             frequency,
@@ -105,6 +111,25 @@ export class SynthEngine {
                 this.activeVoices.delete(voiceId);
             }
         }, voice.ampEnvelope.release * 1000 * (voice.ampEnvelope.enabled ? 1 : 0));
+    }
+
+    stealOldestVoice() {
+        const oldestEntry = this.activeVoices.entries().next().value;
+        if (!oldestEntry) return;
+
+        const [oldestId, oldestVoice] = oldestEntry;
+
+        // trigger a short release to avoid clicks
+        oldestVoice.triggerRelease();
+        this.lpf.triggerRelease();
+
+        // cleanup just like in stopNote()
+        clearTimeout(oldestVoice.cleanupTimeout);
+        oldestVoice.cleanupTimeout = setTimeout(() => {
+            oldestVoice.disconnectLfo(this.lfo, this.lfoMode);
+            oldestVoice.stop();
+            this.activeVoices.delete(oldestId);
+        }, oldestVoice.ampEnvelope.release * 1000 * (oldestVoice.ampEnvelope.enabled ? 1 : 0));
     }
 
     /*
