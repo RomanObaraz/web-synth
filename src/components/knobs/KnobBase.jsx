@@ -43,7 +43,9 @@ export const KnobBase = ({
 
     return (
         <StyledKnobBase>
-            <KnobHeadlessLabel id={labelId}>{label}</KnobHeadlessLabel>
+            <KnobHeadlessLabel className="text-nowrap" id={labelId}>
+                {label}
+            </KnobHeadlessLabel>
             <KnobHeadless
                 className="relative w-16 h-16 outline-none"
                 id={knobId}
