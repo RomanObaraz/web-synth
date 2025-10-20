@@ -4,8 +4,8 @@ export class BitcrusherModule extends BaseModule {
     initModule() {
         this.bitcrusher = new AudioWorkletNode(this.audioCtx, "bitcrusher-processor", {
             parameterData: {
-                bitDepth: 8,
-                reduction: 1,
+                bitDepth: 16,
+                sampleRateHz: 44100,
             },
         });
     }
@@ -20,9 +20,9 @@ export class BitcrusherModule extends BaseModule {
             .setValueAtTime(bitDepth, this.audioCtx.currentTime);
     }
 
-    setReduction(reduction) {
+    setSampleRate(sampleRate) {
         this.bitcrusher.parameters
-            .get("reduction")
-            .setValueAtTime(reduction, this.audioCtx.currentTime);
+            .get("sampleRateHz")
+            .setValueAtTime(sampleRate, this.audioCtx.currentTime);
     }
 }

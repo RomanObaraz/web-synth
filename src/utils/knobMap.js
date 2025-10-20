@@ -36,7 +36,7 @@ export const knobMap = {
     },
     bitcrusher: {
         bitDepth: { cc: 73, min: 2, max: 16, default: 16 },
-        reduction: { cc: 93, min: 1, max: 50, default: 1 },
+        sampleRate: { cc: 93, min: 200, max: 44100, default: 44100, center: 4000 },
     },
     lfo: {
         rate: { cc: 79, min: 0, max: 20, default: 2 },

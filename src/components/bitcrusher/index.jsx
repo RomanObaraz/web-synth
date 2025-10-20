@@ -3,13 +3,14 @@ import { useKnob } from "../../hooks/useKnob";
 import { useSynth } from "../../hooks/useSynth";
 import { knobMap } from "../../utils/knobMap";
 import { KnobLinear } from "../knobs/KnobLinear";
+import { KnobFrequency } from "../knobs/KnobFrequency";
 
 export const Bitcrusher = ({ moduleId }) => {
     const bitDepthParams = knobMap[moduleId].bitDepth;
     const { value: bitDepth, setValue: setBitDepth } = useKnob(bitDepthParams);
 
-    const reductionParams = knobMap[moduleId].reduction;
-    const { value: reduction, setValue: setReduction } = useKnob(reductionParams);
+    const sampleRateParams = knobMap[moduleId].sampleRate;
+    const { value: sampleRate, setValue: setSampleRate } = useKnob(sampleRateParams);
 
     const { synth } = useSynth();
 
@@ -18,8 +19,8 @@ export const Bitcrusher = ({ moduleId }) => {
     }, [synth, bitDepth]);
 
     useEffect(() => {
-        synth.bitcrusher.setReduction(reduction);
-    }, [synth, reduction]);
+        synth.bitcrusher.setSampleRate(sampleRate);
+    }, [synth, sampleRate]);
 
     return (
         <div className="flex justify-center gap-4">
@@ -32,14 +33,15 @@ export const Bitcrusher = ({ moduleId }) => {
                 valueDisplayUnit=""
                 onValueChange={(v) => setBitDepth(v)}
             />
-            <KnobLinear
-                label="Reduction"
-                value={reduction}
-                valueDefault={reductionParams.default}
-                valueMin={reductionParams.min}
-                valueMax={reductionParams.max}
+            <KnobFrequency
+                label="Sample Rate"
+                value={sampleRate}
+                valueDefault={sampleRateParams.default}
+                valueMin={sampleRateParams.min}
+                valueMax={sampleRateParams.max}
+                valueCenter={sampleRateParams.center}
                 valueDisplayUnit=""
-                onValueChange={(v) => setReduction(v)}
+                onValueChange={(v) => setSampleRate(v)}
             />
         </div>
     );

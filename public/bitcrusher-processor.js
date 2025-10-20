@@ -9,10 +9,10 @@ class BitcrusherProcessor extends AudioWorkletProcessor {
                 automationRate: "k-rate",
             },
             {
-                name: "reduction",
-                defaultValue: 1,
-                minValue: 1,
-                maxValue: 50,
+                name: "sampleRateHz",
+                defaultValue: 44100,
+                minValue: 200,
+                maxValue: 44100,
                 automationRate: "k-rate",
             },
         ];
@@ -30,7 +30,11 @@ class BitcrusherProcessor extends AudioWorkletProcessor {
         if (!input.length) return true;
 
         const bitDepth = Math.max(1, Math.round(parameters.bitDepth[0]));
-        const reduction = Math.max(1, parameters.reduction[0]);
+        const sampleRateHz = Math.max(1, parameters.sampleRateHz[0]);
+        const hostRate = sampleRate; // sampleRate is AudioWorkletProcessor global
+
+        // number of host samples to skip before next update
+        const interval = hostRate / sampleRateHz;
 
         const step = 1 / Math.pow(2, bitDepth);
 
@@ -39,8 +43,8 @@ class BitcrusherProcessor extends AudioWorkletProcessor {
             const outputChannel = output[channel];
 
             for (let i = 0; i < inputChannel.length; i++) {
-                if (this.counter >= reduction) {
-                    this.counter = 0;
+                if (this.counter >= interval) {
+                    this.counter -= interval;
                     this.lastSample = Math.round(inputChannel[i] / step) * step;
                 }
 
