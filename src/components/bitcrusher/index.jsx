@@ -10,7 +10,7 @@ export const Bitcrusher = ({ moduleId }) => {
     const { value: bitDepth, setValue: setBitDepth } = useKnob(bitDepthParams);
 
     const sampleRateParams = knobMap[moduleId].sampleRate;
-    const { value: sampleRate, setValue: setSampleRate } = useKnob(sampleRateParams);
+    const { value: sampleRate, setValue: setSampleRate } = useKnob(sampleRateParams, true);
 
     const { synth } = useSynth();
 
