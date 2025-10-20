@@ -17,13 +17,13 @@ import { useKnob } from "../../hooks/useKnob";
 
 export default function LFO({ moduleId }) {
     const [waveform, setWaveform] = useState("sine");
-    const [lfoMode, setLfoMode] = useState("wah");
+    const [lfoMode, setLfoMode] = useState("vibrato");
 
     const rateParams = knobMap[moduleId].rate;
     const { value: rate, setValue: setRate } = useKnob(rateParams);
 
     const depthParams = knobMap[moduleId].depth;
-    const [depthRange, setDepthRange] = useState(depthParams.wah);
+    const [depthRange, setDepthRange] = useState(depthParams.vibrato);
     const { value: depth, setValue: setDepth } = useKnob(depthRange, lfoMode === "wah");
 
     const { synth } = useSynth();

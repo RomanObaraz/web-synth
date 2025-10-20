@@ -41,6 +41,7 @@ export const knobMap = {
     lfo: {
         rate: { cc: 79, min: 0, max: 20, default: 2 },
         depth: {
+            cc: 72,
             vibrato: { cc: 72, min: 0, max: 100, default: 5 },
             tremolo: { cc: 72, min: 0, max: 100, default: 50 },
             wah: { cc: 72, min: 0, max: 5000, default: 100, center: 500 },
