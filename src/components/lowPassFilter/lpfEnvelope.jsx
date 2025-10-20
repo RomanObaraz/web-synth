@@ -5,10 +5,17 @@ import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
 
 export const LpfEnvelope = ({ moduleId }) => {
-    const [attack, setAttack] = useState(0);
-    const [decay, setDecay] = useState(0);
-    const [sustain, setSustain] = useState(100);
-    const [release, setRelease] = useState(0.1);
+    const attackDefault = knobMap[moduleId].attack.default;
+    const [attack, setAttack] = useState(attackDefault);
+
+    const decayDefault = knobMap[moduleId].decay.default;
+    const [decay, setDecay] = useState(decayDefault);
+
+    const sustainDefault = knobMap[moduleId].sustain.default;
+    const [sustain, setSustain] = useState(sustainDefault);
+
+    const releaseDefault = knobMap[moduleId].release.default;
+    const [release, setRelease] = useState(releaseDefault);
 
     const { synth } = useSynth();
 
@@ -46,14 +53,14 @@ export const LpfEnvelope = ({ moduleId }) => {
                 variant="warning"
                 label="Sustain"
                 value={sustain}
-                valueDefault={knobMap[moduleId].sustain.default}
+                valueDefault={sustainDefault}
                 onValueChange={(v) => setSustain(v)}
             />
             <KnobTime
                 variant="warning"
                 label="Release"
                 value={release}
-                valueDefault={knobMap[moduleId].release.default}
+                valueDefault={releaseDefault}
                 onValueChange={(v) => setRelease(v)}
             />
         </div>
