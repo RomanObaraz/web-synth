@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { LpfEnvelope } from "./lpfEnvelope";
 import { KnobFrequency } from "../knobs/KnobFrequency";
@@ -14,7 +14,7 @@ export const LowPassFilter = ({ moduleId }) => {
     const { value: resonance, setValue: setResonance } = useKnob(resonanceParams);
 
     const envDepthParams = knobMap[moduleId].envDepth;
-    const { value: envDepth, setValue: setEnvDepth } = useKnob(envDepthParams);
+    const [envDepth, setEnvDepth] = useState(envDepthParams.default);
 
     const { synth } = useSynth();
 
@@ -44,6 +44,7 @@ export const LowPassFilter = ({ moduleId }) => {
                     onValueChange={(v) => setResonance(v)}
                 />
                 <KnobLinear
+                    variant="warning"
                     label="Env depth"
                     value={envDepth}
                     valueMin={envDepthParams.min}
