@@ -34,6 +34,10 @@ export const knobMap = {
         drive: { cc: 73, min: 0, max: 100, default: 0 },
         mix: { cc: 75, min: 0, max: 100, default: 0 },
     },
+    bitcrusher: {
+        bitDepth: { cc: 73, min: 2, max: 16, default: 16 },
+        reduction: { cc: 93, min: 1, max: 50, default: 1 },
+    },
     lfo: {
         rate: { cc: 79, min: 0, max: 20, default: 2 },
         depth: {

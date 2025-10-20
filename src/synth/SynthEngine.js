@@ -3,6 +3,7 @@ import { LFOModule } from "./modules/LFOModule";
 import { LPFModule } from "./modules/LPFModule";
 import { OscillatorModule } from "./modules/OscillatorModule";
 import { ReverbModule } from "./modules/ReverbModule";
+import { BitcrusherModule } from "./modules/BitcrusherModule";
 import { setSmoothLevel } from "./utils";
 import { Voice } from "./Voice";
 
@@ -32,6 +33,7 @@ export class SynthEngine {
         await Promise.all([
             this.audioCtx.audioWorklet.addModule("/clamp-processor.js"),
             this.audioCtx.audioWorklet.addModule("/pulse-oscillator-processor.js"),
+            this.audioCtx.audioWorklet.addModule("/bitcrusher-processor.js"),
         ]);
 
         // modules
@@ -43,12 +45,14 @@ export class SynthEngine {
         this.lpf = new LPFModule(this.audioCtx);
         this.reverb = new ReverbModule(this.audioCtx);
         this.distortion = new DistortionModule(this.audioCtx);
+        this.bitcrusher = new BitcrusherModule(this.audioCtx);
         this.lfo = new LFOModule(this.audioCtx);
         this.lfoMode = "wah";
 
         // connection chain
         this.lpf.output.connect(this.distortion.input);
-        this.distortion.output.connect(this.reverb.input);
+        this.distortion.output.connect(this.bitcrusher.input);
+        this.bitcrusher.output.connect(this.reverb.input);
         this.reverb.output.connect(this.masterGain);
         this.masterGain.connect(this.masterLimiter);
         this.masterLimiter.connect(this.analyser);

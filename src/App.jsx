@@ -10,6 +10,7 @@ import LFO from "./components/lfo";
 import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
 import { InputController } from "./components/InputController";
+import { Bitcrusher } from "./components/bitcrusher";
 
 function App() {
     useMIDIManager();
@@ -60,6 +61,11 @@ function App() {
                     <div>
                         <Toggleable label="Distortion">
                             <Distortion moduleId="distortion" />
+                        </Toggleable>
+                    </div>
+                    <div>
+                        <Toggleable label="Bitcrusher">
+                            <Bitcrusher moduleId="bitcrusher" />
                         </Toggleable>
                     </div>
                     <div>
