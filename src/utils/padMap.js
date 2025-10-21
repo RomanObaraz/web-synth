@@ -17,22 +17,22 @@ export const padMap = [
     {
         cc: 25,
         padNumber: 0x7b,
-        moduleId: "ampEnvelope",
+        moduleId: "lpf",
     },
     {
         cc: 26,
         padNumber: 0x7c,
-        moduleId: "lpf",
+        moduleId: "reverb",
     },
     {
         cc: 27,
         padNumber: 0x7d,
-        moduleId: "reverb",
+        moduleId: "distortion",
     },
     {
         cc: 28,
         padNumber: 0x7e,
-        moduleId: "distortion",
+        moduleId: "bitcrusher",
     },
     {
         cc: 29,
