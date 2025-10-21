@@ -5,6 +5,7 @@ import { KnobFrequency } from "../knobs/KnobFrequency";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const LowPassFilter = ({ moduleId }) => {
     const cutoffParams = knobMap[moduleId].cutoff;
@@ -17,6 +18,17 @@ export const LowPassFilter = ({ moduleId }) => {
     const [envDepth, setEnvDepth] = useState(envDepthParams.default);
 
     const { synth } = useSynth();
+
+    usePresetBridge(
+        moduleId,
+        () => ({ cutoff, resonance, envDepth }),
+        (data) => {
+            if (!data) return;
+            if (data.cutoff) setCutoff(data.cutoff);
+            if (data.resonance !== undefined) setResonance(data.resonance);
+            if (data.envDepth !== undefined) setEnvDepth(data.envDepth);
+        }
+    );
 
     useEffect(() => {
         synth.lpf.setCutoff(cutoff);

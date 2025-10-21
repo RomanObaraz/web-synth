@@ -4,6 +4,7 @@ import { useSynth } from "../../hooks/useSynth";
 import { KnobTime } from "../knobs/KnobTime";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const AmpEnvelope = ({ moduleId }) => {
     const attackDefault = knobMap[moduleId].attack.default;
@@ -20,6 +21,19 @@ export const AmpEnvelope = ({ moduleId }) => {
 
     const [voiceMode, setVoiceMode] = useState("polyphonic");
     const { synth } = useSynth();
+
+    usePresetBridge(
+        moduleId,
+        () => ({ attack, decay, sustain, release, voiceMode }),
+        (data) => {
+            if (!data) return;
+            if (data.attack) setAttack(data.attack);
+            if (data.decay !== undefined) setDecay(data.decay);
+            if (data.sustain !== undefined) setSustain(data.sustain);
+            if (data.release !== undefined) setRelease(data.release);
+            if (data.voiceMode !== undefined) setVoiceMode(data.voiceMode);
+        }
+    );
 
     useEffect(() => {
         synth.setEnvelopeADSR({ attack });

@@ -3,6 +3,7 @@ import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const Distortion = ({ moduleId }) => {
     const driveParams = knobMap[moduleId].drive;
@@ -12,6 +13,16 @@ export const Distortion = ({ moduleId }) => {
     const { value: mix, setValue: setMix } = useKnob(mixParams);
 
     const { synth } = useSynth();
+
+    usePresetBridge(
+        moduleId,
+        () => ({ drive, mix }),
+        (data) => {
+            if (!data) return;
+            if (data.drive) setDrive(data.drive);
+            if (data.mix !== undefined) setMix(data.mix);
+        }
+    );
 
     useEffect(() => {
         synth.distortion.setDrive(drive);

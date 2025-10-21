@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { useKnob } from "../../hooks/useKnob";
 import { knobMap } from "../../utils/knobMap";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const Oscillator = ({ id, moduleId }) => {
     const [waveform, setWaveform] = useState("sawtooth");
@@ -19,11 +20,30 @@ export const Oscillator = ({ id, moduleId }) => {
 
     const { synth } = useSynth();
 
+    const pulseWidthFromPreset = useRef(null); // hack for proper setPulseWidth on preset load
+
+    usePresetBridge(
+        moduleId,
+        () => ({ waveform, level, detune, pulseWidth }),
+        (data) => {
+            if (!data) return;
+            if (data.waveform) setWaveform(data.waveform);
+            if (data.level !== undefined) setLevel(data.level);
+            if (data.detune !== undefined) setDetune(data.detune);
+            if (data.pulseWidth !== undefined) pulseWidthFromPreset.current = data.pulseWidth;
+        }
+    );
+
     useEffect(() => {
         synth.setWaveform(id, waveform);
 
         if (waveform === "pulse") {
-            setPulseWidth(pulseWidthParams.default);
+            if (pulseWidthFromPreset.current !== null) {
+                setPulseWidth(pulseWidthFromPreset.current);
+                pulseWidthFromPreset.current = null;
+            } else {
+                setPulseWidth(pulseWidthParams.default);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [synth, id, waveform]);

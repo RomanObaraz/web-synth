@@ -8,12 +8,13 @@ import {
     Select,
     Tooltip,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { KnobFrequency } from "../knobs/KnobFrequency";
 import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export default function LFO({ moduleId }) {
     const [waveform, setWaveform] = useState("sine");
@@ -28,6 +29,20 @@ export default function LFO({ moduleId }) {
 
     const { synth } = useSynth();
 
+    const depthFromPreset = useRef(null); // hack for proper setDepth on preset load
+
+    usePresetBridge(
+        moduleId,
+        () => ({ waveform, lfoMode, rate, depth }),
+        (data) => {
+            if (!data) return;
+            if (data.waveform) setWaveform(data.waveform);
+            if (data.lfoMode) handleSetLfoMode(data.lfoMode);
+            if (data.rate !== undefined) setRate(data.rate);
+            if (data.depth !== undefined) depthFromPreset.current = data.depth;
+        }
+    );
+
     const handleSetLfoMode = (mode) => {
         if (depthParams[mode]) {
             setLfoMode(mode);
@@ -37,7 +52,12 @@ export default function LFO({ moduleId }) {
 
     // this is needed to reset depth value on lfoMode change
     useEffect(() => {
-        setDepth(depthParams[lfoMode].default);
+        if (depthFromPreset.current !== null) {
+            setDepth(depthFromPreset.current);
+            depthFromPreset.current = null;
+        } else {
+            setDepth(depthParams[lfoMode].default);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lfoMode]);
 

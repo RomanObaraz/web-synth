@@ -3,6 +3,7 @@ import { useSynth } from "../../hooks/useSynth";
 import { KnobTime } from "../knobs/KnobTime";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const LpfEnvelope = ({ moduleId }) => {
     const attackDefault = knobMap[moduleId].attack.default;
@@ -18,6 +19,18 @@ export const LpfEnvelope = ({ moduleId }) => {
     const [release, setRelease] = useState(releaseDefault);
 
     const { synth } = useSynth();
+
+    usePresetBridge(
+        "lpf-envelope",
+        () => ({ attack, decay, sustain, release }),
+        (data) => {
+            if (!data) return;
+            if (data.attack) setAttack(data.attack);
+            if (data.decay !== undefined) setDecay(data.decay);
+            if (data.sustain !== undefined) setSustain(data.sustain);
+            if (data.release !== undefined) setRelease(data.release);
+        }
+    );
 
     useEffect(() => {
         synth.lpf.setADSR({ attack });

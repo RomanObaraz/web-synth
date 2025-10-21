@@ -4,6 +4,7 @@ import { useSynth } from "../../hooks/useSynth";
 import { knobMap } from "../../utils/knobMap";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { KnobFrequency } from "../knobs/KnobFrequency";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const Bitcrusher = ({ moduleId }) => {
     const bitDepthParams = knobMap[moduleId].bitDepth;
@@ -13,6 +14,16 @@ export const Bitcrusher = ({ moduleId }) => {
     const { value: sampleRate, setValue: setSampleRate } = useKnob(sampleRateParams, true);
 
     const { synth } = useSynth();
+
+    usePresetBridge(
+        moduleId,
+        () => ({ bitDepth, sampleRate }),
+        (data) => {
+            if (!data) return;
+            if (data.bitDepth) setBitDepth(data.bitDepth);
+            if (data.sampleRate !== undefined) setSampleRate(data.sampleRate);
+        }
+    );
 
     useEffect(() => {
         synth.bitcrusher.setBitDepth(Math.round(bitDepth));

@@ -4,6 +4,7 @@ import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { useKnob } from "../../hooks/useKnob";
 import { knobMap } from "../../utils/knobMap";
+import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const SubOscillator = ({ id, moduleId }) => {
     const [waveform, setWaveform] = useState("square");
@@ -20,6 +21,16 @@ export const SubOscillator = ({ id, moduleId }) => {
     useEffect(() => {
         synth.setSubLevel(id, level / 100);
     }, [synth, id, level]);
+
+    usePresetBridge(
+        moduleId,
+        () => ({ waveform, level }),
+        (data) => {
+            if (!data) return;
+            if (data.waveform) setWaveform(data.waveform);
+            if (data.level !== undefined) setLevel(data.level);
+        }
+    );
 
     return (
         <div className="flex flex-col gap-4 items-center">
