@@ -61,5 +61,19 @@ export const useMIDIStore = create(
                 },
             }));
         },
+
+        getPresetState: () => ({
+            knobs: get().knobs,
+            knobsEnabled: get().knobsEnabled,
+        }),
+
+        applyPresetState: (data) => {
+            if (!data) return;
+
+            set({
+                knobs: data.knobs ?? {},
+                knobsEnabled: data.knobsEnabled ?? {},
+            });
+        },
     }))
 );

@@ -6,7 +6,7 @@ export const useToggleStore = create(
     subscribeWithSelector(
         persist(
             (set, get) => ({
-                toggles: Object.fromEntries(padMap.map((pad) => [pad.moduleId, true])), // { [moduleId]: true/false }
+                toggles: Object.fromEntries(padMap.map((pad) => [pad.moduleId, true])), // { [moduleId]: boolean }
 
                 setToggle: (moduleId, isEnabled) =>
                     set((state) => ({
@@ -16,6 +16,15 @@ export const useToggleStore = create(
                 isEnabled: (moduleId) => {
                     const toggles = get().toggles;
                     return toggles[moduleId] ?? true;
+                },
+
+                getPresetState: () => ({
+                    toggles: get().toggles,
+                }),
+
+                applyPresetState: (data) => {
+                    if (!data) return;
+                    set({ toggles: { ...get().toggles, ...data.toggles } });
                 },
             }),
             { name: "toggle-storage" }
