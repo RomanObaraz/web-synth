@@ -11,6 +11,7 @@ import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
 import { InputController } from "./components/InputController";
 import { Bitcrusher } from "./components/bitcrusher";
+import { PresetSelect } from "./components/presetSelect";
 
 function App() {
     useMIDIManager();
@@ -18,6 +19,10 @@ function App() {
     return (
         <>
             <InputController />
+
+            <div className="flex justify-end">
+                <PresetSelect />
+            </div>
 
             <div className="flex flex-col gap-10">
                 <div className="self-center">

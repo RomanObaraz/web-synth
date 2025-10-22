@@ -11,7 +11,12 @@ export const useKeyboard = ({ onKeyDown, onKeyUp }) => {
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.repeat) return;
+            // ignore if typing in input, textarea, or contenteditable
+            const tag = e.target.tagName.toLowerCase();
+            const isEditable = tag === "input" || tag === "textarea" || e.target.isContentEditable;
+
+            if (isEditable) return; // skip handling keys while editing text
+            if (e.repeat) return; // skip key hold
 
             onKeyDownRef.current(e.key);
         };
