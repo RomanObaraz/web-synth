@@ -16,10 +16,10 @@ export const Toggleable = ({ label, children }) => {
     }, [enabled, moduleId, setBypass]);
 
     return (
-        <Card className="p-4" variant="outlined">
+        <Card className="h-full py-4 px-2" variant="outlined">
             <div className="flex items-center relative">
                 <div className="flex-1">
-                    <Typography>{label}</Typography>
+                    <Typography color="textSecondary">{label}</Typography>
                 </div>
                 <div className="absolute right-0">
                     <Checkbox
@@ -31,8 +31,7 @@ export const Toggleable = ({ label, children }) => {
                 </div>
             </div>
             <CardContent
-                sx={{ padding: "16px !important" }}
-                className={`transition-opacity ${
+                className={`!p-2 transition-opacity ${
                     enabled ? "opacity-100" : "opacity-25 pointer-events-none"
                 }`}
             >

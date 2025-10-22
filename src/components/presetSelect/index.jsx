@@ -29,7 +29,8 @@ export const PresetSelect = () => {
                 blurOnSelect
                 clearOnBlur={false}
                 options={presets.map((p) => p.name)}
-                sx={{ width: 300 }}
+                sx={{ width: 200 }}
+                size="small"
                 value={name}
                 onChange={(_, newName) => {
                     setName(newName);

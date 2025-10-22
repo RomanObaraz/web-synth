@@ -43,8 +43,8 @@ export const LowPassFilter = ({ moduleId }) => {
     }, [synth, envDepth]);
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className="flex justify-center gap-4">
+        <div className="flex flex-col justify-center items-center gap-4">
+            <div className="flex gap-4">
                 <KnobFrequency label="Cutoff" value={cutoff} onValueChange={(v) => setCutoff(v)} />
                 <KnobLinear
                     label="Resonance"
@@ -55,16 +55,17 @@ export const LowPassFilter = ({ moduleId }) => {
                     valueDisplayUnit=""
                     onValueChange={(v) => setResonance(v)}
                 />
-                <KnobLinear
-                    variant="warning"
-                    label="Env depth"
-                    value={envDepth}
-                    valueMin={envDepthParams.min}
-                    valueMax={envDepthParams.max}
-                    valueDisplayUnit=" Hz"
-                    onValueChange={(v) => setEnvDepth(v)}
-                />
             </div>
+
+            <KnobLinear
+                variant="warning"
+                label="Env depth"
+                value={envDepth}
+                valueMin={envDepthParams.min}
+                valueMax={envDepthParams.max}
+                valueDisplayUnit=" Hz"
+                onValueChange={(v) => setEnvDepth(v)}
+            />
 
             <LpfEnvelope moduleId={moduleId} />
         </div>

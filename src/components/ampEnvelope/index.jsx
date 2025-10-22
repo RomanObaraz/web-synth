@@ -56,8 +56,8 @@ export const AmpEnvelope = ({ moduleId }) => {
     }, [synth, voiceMode]);
 
     return (
-        <div className="flex justify-center items-center gap-4">
-            <div className="flex justify-center gap-4">
+        <div className="flex flex-col justify-center items-center gap-4">
+            <div className="grid grid-rows-2 grid-cols-2 gap-4">
                 <KnobTime
                     variant="warning"
                     label="Attack"
@@ -88,22 +88,24 @@ export const AmpEnvelope = ({ moduleId }) => {
 
             <FormControl>
                 <RadioGroup value={voiceMode} onChange={(e) => setVoiceMode(e.target.value)}>
-                    <Tooltip title="Polyphonic" placement="top">
-                        <FormControlLabel
-                            className="mr-0!"
-                            value="polyphonic"
-                            control={<Radio />}
-                            label="P"
-                        />
-                    </Tooltip>
-                    <Tooltip title="Retrigger" placement="bottom">
-                        <FormControlLabel
-                            className="mr-0!"
-                            value="retrigger"
-                            control={<Radio />}
-                            label="R"
-                        />
-                    </Tooltip>
+                    <div className="flex gap-6">
+                        <Tooltip title="Polyphonic" placement="top">
+                            <FormControlLabel
+                                className="mr-0!"
+                                value="polyphonic"
+                                control={<Radio />}
+                                label="P"
+                            />
+                        </Tooltip>
+                        <Tooltip title="Retrigger" placement="bottom">
+                            <FormControlLabel
+                                className="mr-0!"
+                                value="retrigger"
+                                control={<Radio />}
+                                label="R"
+                            />
+                        </Tooltip>
+                    </div>
                 </RadioGroup>
             </FormControl>
         </div>

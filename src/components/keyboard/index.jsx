@@ -14,10 +14,10 @@ export const Keyboard = () => {
                 return (
                     <Button
                         sx={{
-                            minWidth: isSharp ? 40 : 56,
-                            width: isSharp ? 40 : 56,
-                            height: isSharp ? 112 : 160,
-                            marginInline: isSharp ? -3 : 0,
+                            minWidth: isSharp ? 34 : 48,
+                            width: isSharp ? 34 : 48,
+                            height: isSharp ? 100 : 140,
+                            marginInline: isSharp ? -2.6 : 0,
                             zIndex: isSharp ? 1 : 0,
                         }}
                         className="flex !items-end"

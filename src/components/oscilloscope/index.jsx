@@ -102,12 +102,22 @@ export const Oscilloscope = () => {
         };
     }, [synth]);
 
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const resize = () => {
+            const { width, height } = canvas.getBoundingClientRect();
+            canvas.width = width;
+            canvas.height = height;
+        };
+        resize();
+    }, []);
+
     return (
         <canvas
             ref={canvasRef}
-            width={400}
-            height={200}
-            className="rounded-md outline-1 outline-[#90caf9]"
+            // width={580}
+            // height={340}
+            className="w-full h-full rounded-md outline-1 outline-[#90caf9]"
         />
     );
 };
