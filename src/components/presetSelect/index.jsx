@@ -9,7 +9,6 @@ export const PresetSelect = () => {
     const [inputValue, setInputValue] = useState("");
 
     const handleSave = () => {
-        console.log(inputValue);
         if (!inputValue.trim()) return;
 
         savePreset(inputValue);
