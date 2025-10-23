@@ -11,8 +11,8 @@ export const theme = createTheme({
                 disableRipple: true,
             },
             styleOverrides: {
-                outlined: () => ({
-                    backgroundColor: "#121212",
+                outlined: ({ theme }) => ({
+                    backgroundColor: theme.palette.background.default,
                 }),
             },
         },
