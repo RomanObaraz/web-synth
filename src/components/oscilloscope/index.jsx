@@ -1,10 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSynth } from "../../hooks/useSynth";
+import { alpha, Card, useTheme } from "@mui/material";
 
 export const Oscilloscope = () => {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
     const { synth } = useSynth();
+    const theme = useTheme();
+
+    const waveColor = useMemo(() => theme.palette.warning.main, [theme]);
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -19,26 +23,46 @@ export const Oscilloscope = () => {
         const dataArray = new Float32Array(bufferLength);
 
         const drawGrid = (ctx) => {
-            ctx.strokeStyle = "rgba(144, 202, 249,0.2)";
+            ctx.strokeStyle = alpha(waveColor, 0.1);
             ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.width; i += 50) {
+            const step = 50;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // draw horizontal lines from center
+            for (let y = centerY; y < canvas.height; y += step) {
                 ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
                 ctx.stroke();
             }
-            for (let j = 0; j < canvas.height; j += 50) {
+            for (let y = centerY - step; y > 0; y -= step) {
                 ctx.beginPath();
-                ctx.moveTo(0, j);
-                ctx.lineTo(canvas.width, j);
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // draw vertical lines from center
+            for (let x = centerX; x < canvas.width; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let x = centerX - step; x > 0; x -= step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
                 ctx.stroke();
             }
         };
 
         const drawWave = (ctx) => {
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "rgba(0, 255, 200, 1)";
-            ctx.shadowColor = "rgba(0, 255, 200, 0.8)";
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = waveColor;
+            ctx.shadowColor = alpha(waveColor, 0.8);
             ctx.shadowBlur = 15;
             ctx.lineCap = "round";
 
@@ -85,14 +109,16 @@ export const Oscilloscope = () => {
 
         const draw = () => {
             animationRef.current = requestAnimationFrame(draw);
-
             synth.analyser.getFloatTimeDomainData(dataArray);
 
             ctx.fillStyle = "rgba(0,0,0,0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            drawGrid(ctx);
+            ctx.globalCompositeOperation = "lighter";
             drawWave(ctx);
+
+            ctx.globalCompositeOperation = "source-over";
+            drawGrid(ctx);
         };
 
         draw();
@@ -100,24 +126,25 @@ export const Oscilloscope = () => {
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
         };
-    }, [synth]);
+    }, [synth, waveColor]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         const resize = () => {
-            const { width, height } = canvas.getBoundingClientRect();
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
         };
         resize();
+
+        const observer = new ResizeObserver(resize);
+        observer.observe(canvas);
+
+        return () => observer.disconnect();
     }, []);
 
     return (
-        <canvas
-            ref={canvasRef}
-            // width={580}
-            // height={340}
-            className="w-full h-full rounded-md outline-1 outline-[#90caf9]"
-        />
+        <Card className="w-full h-full" variant="outlined">
+            <canvas ref={canvasRef} className="w-full h-full" />
+        </Card>
     );
 };
