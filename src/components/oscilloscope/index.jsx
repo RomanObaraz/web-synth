@@ -77,7 +77,8 @@ export const Oscilloscope = () => {
                 }
             }
 
-            const sliceWidth = canvas.width / bufferLength + 0.05;
+            // multiplying by 1.5 stretches the wave, hiding the artifacts at its end
+            const sliceWidth = (canvas.width / bufferLength) * 1.5;
             let x = 0;
 
             for (let i = start; i < bufferLength; i++) {
@@ -90,16 +91,6 @@ export const Oscilloscope = () => {
                     ctx.lineTo(x, y);
                 }
 
-                x += sliceWidth;
-            }
-
-            // TODO: there should be a better fix for this and for 0.05 constant at sliceWidth
-            // TODO: this creates visible artifacts in some cases (square vibrato depth 100)
-            // thos fixes blinking/flickering artifacts at wave end
-            for (let i = 0; i < start; i++) {
-                const value = dataArray[i];
-                const y = (value * 0.5 + 0.5) * canvas.height;
-                ctx.lineTo(x, y);
                 x += sliceWidth;
             }
 
