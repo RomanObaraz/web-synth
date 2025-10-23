@@ -8,7 +8,7 @@ export const Keyboard = () => {
     const { activeVoices } = useVoiceStore();
 
     return (
-        <div className="flex gap-1.5 justify-center">
+        <div className="flex gap-1 justify-center">
             {keyMidiMap.map((key, i) => {
                 const isSharp = key.note.includes("#");
                 return (
@@ -17,7 +17,7 @@ export const Keyboard = () => {
                             minWidth: isSharp ? 34 : 48,
                             width: isSharp ? 34 : 48,
                             height: isSharp ? 100 : 140,
-                            marginInline: isSharp ? -2.6 : 0,
+                            marginInline: isSharp ? -2.4 : 0,
                             zIndex: isSharp ? 1 : 0,
                         }}
                         className="flex !items-end"
