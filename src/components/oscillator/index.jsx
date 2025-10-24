@@ -7,7 +7,7 @@ import { knobMap } from "../../utils/knobMap";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
 
 export const Oscillator = ({ id, moduleId }) => {
-    const [waveform, setWaveform] = useState("sawtooth");
+    const [waveform, setWaveform] = useState("sine");
 
     const levelParams = knobMap[moduleId].level;
     const { value: level, setValue: setLevel } = useKnob(levelParams);
