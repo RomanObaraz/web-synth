@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from "react";
 import { useMIDIStore } from "../stores/useMIDIStore";
 import { mapFrom01Linear, mapTo01Linear, NormalisableRange } from "../utils/math";
+import { useParamDisplayStore } from "../stores/useParamDisplayStore";
 
-// TODO: maybe this just has to go inside uncontrolled Knob components, idk
-
-export const useKnob = (params, isInterpolated = false) => {
+export const useKnob = (params, moduleLabel, paramLabel, isInterpolated = false) => {
     const knob = useMIDIStore((state) => state.knobs[params.cc]);
     const setKnobValue = useMIDIStore((state) => state.setKnobValue);
+    const notifyChange = useParamDisplayStore((state) => state.notifyChange);
     let mapTo01;
     let mapFrom01;
 
@@ -28,6 +28,10 @@ export const useKnob = (params, isInterpolated = false) => {
         },
         [setKnobValue, params.cc, params.min, params.max, mapTo01]
     );
+
+    useEffect(() => {
+        notifyChange(moduleLabel, paramLabel, Math.round(value));
+    }, [value, notifyChange, moduleLabel, paramLabel]);
 
     useEffect(() => {
         if (knob === undefined) setValue(params.default);

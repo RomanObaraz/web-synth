@@ -5,12 +5,12 @@ import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
 
-export const Distortion = ({ moduleId }) => {
+export const Distortion = ({ moduleId, label }) => {
     const driveParams = knobMap[moduleId].drive;
-    const { value: drive, setValue: setDrive } = useKnob(driveParams);
+    const { value: drive, setValue: setDrive } = useKnob(driveParams, label, "Drive");
 
     const mixParams = knobMap[moduleId].mix;
-    const { value: mix, setValue: setMix } = useKnob(mixParams);
+    const { value: mix, setValue: setMix } = useKnob(mixParams, label, "Mix");
 
     const { synth } = useSynth();
 

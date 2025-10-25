@@ -5,20 +5,26 @@ import { KnobLinear } from "../knobs/KnobLinear";
 import { useKnob } from "../../hooks/useKnob";
 import { knobMap } from "../../utils/knobMap";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
+import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
 
-export const Oscillator = ({ id, moduleId }) => {
+export const Oscillator = ({ id, moduleId, label }) => {
     const [waveform, setWaveform] = useState("sine");
 
     const levelParams = knobMap[moduleId].level;
-    const { value: level, setValue: setLevel } = useKnob(levelParams);
+    const { value: level, setValue: setLevel } = useKnob(levelParams, label, "Level");
 
     const detuneParams = knobMap[moduleId].detune;
-    const { value: detune, setValue: setDetune } = useKnob(detuneParams);
+    const { value: detune, setValue: setDetune } = useKnob(detuneParams, label, "Detune");
 
     const pulseWidthParams = knobMap[moduleId].pulseWidth;
-    const { value: pulseWidth, setValue: setPulseWidth } = useKnob(pulseWidthParams);
+    const { value: pulseWidth, setValue: setPulseWidth } = useKnob(
+        pulseWidthParams,
+        label,
+        "PulseWidth"
+    );
 
     const { synth } = useSynth();
+    const notifyChange = useParamDisplayStore((state) => state.notifyChange);
 
     const pulseWidthFromPreset = useRef(null); // hack for proper setPulseWidth on preset load
 
@@ -72,7 +78,11 @@ export const Oscillator = ({ id, moduleId }) => {
                     labelId={`wave-oscillator-label-${id}`}
                     label="Wave"
                     value={waveform}
-                    onChange={(e) => setWaveform(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setWaveform(value);
+                        notifyChange(label, "Wave", value);
+                    }}
                 >
                     <MenuItem value="sine">Sine</MenuItem>
                     <MenuItem value="pulse">Pulse</MenuItem>
@@ -106,8 +116,7 @@ export const Oscillator = ({ id, moduleId }) => {
                         valueDefault={pulseWidthParams.default}
                         valueMin={pulseWidthParams.min}
                         valueMax={pulseWidthParams.max}
-                        valueDisplayRoundPrecision={2}
-                        onValueChange={(v) => setPulseWidth(Number(v.toFixed(2)))}
+                        onValueChange={(v) => setPulseWidth(Math.round(v))}
                     />
                 )}
             </div>

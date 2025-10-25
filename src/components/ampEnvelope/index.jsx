@@ -5,22 +5,25 @@ import { KnobTime } from "../knobs/KnobTime";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
+import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
 
-export const AmpEnvelope = ({ moduleId }) => {
+export const AmpEnvelope = ({ moduleId, label }) => {
     const attackDefault = knobMap[moduleId].attack.default;
-    const [attack, setAttack] = useState(attackDefault);
+    const [attack, setAttack] = useState(attackDefault, label, "Attack");
 
     const decayDefault = knobMap[moduleId].decay.default;
-    const [decay, setDecay] = useState(decayDefault);
+    const [decay, setDecay] = useState(decayDefault, label, "Decay");
 
     const sustainDefault = knobMap[moduleId].sustain.default;
-    const [sustain, setSustain] = useState(sustainDefault);
+    const [sustain, setSustain] = useState(sustainDefault, label, "Sustain");
 
     const releaseDefault = knobMap[moduleId].release.default;
-    const [release, setRelease] = useState(releaseDefault);
+    const [release, setRelease] = useState(releaseDefault, label, "Release");
 
     const [voiceMode, setVoiceMode] = useState("polyphonic");
+
     const { synth } = useSynth();
+    const notifyChange = useParamDisplayStore((state) => state.notifyChange);
 
     usePresetBridge(
         moduleId,
@@ -62,32 +65,51 @@ export const AmpEnvelope = ({ moduleId }) => {
                     variant="warning"
                     label="Attack"
                     value={attack}
-                    onValueChange={(v) => setAttack(v)}
+                    onValueChange={(v) => {
+                        setAttack(v);
+                        notifyChange(label, "Attack", Number(v.toFixed(2)));
+                    }}
                 />
                 <KnobTime
                     variant="warning"
                     label="Decay"
                     value={decay}
-                    onValueChange={(v) => setDecay(v)}
+                    onValueChange={(v) => {
+                        setDecay(v);
+                        notifyChange(label, "Decay", Number(v.toFixed(2)));
+                    }}
                 />
                 <KnobLinear
                     variant="warning"
                     label="Sustain"
                     value={sustain}
                     valueDefault={sustainDefault}
-                    onValueChange={(v) => setSustain(v)}
+                    onValueChange={(v) => {
+                        setSustain(v);
+                        notifyChange(label, "Sustain", Number(v.toFixed(2)));
+                    }}
                 />
                 <KnobTime
                     variant="warning"
                     label="Release"
                     value={release}
                     valueDefault={releaseDefault}
-                    onValueChange={(v) => setRelease(v)}
+                    onValueChange={(v) => {
+                        setRelease(v);
+                        notifyChange(label, "Release", Number(v.toFixed(2)));
+                    }}
                 />
             </div>
 
             <FormControl>
-                <RadioGroup value={voiceMode} onChange={(e) => setVoiceMode(e.target.value)}>
+                <RadioGroup
+                    value={voiceMode}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setVoiceMode(value);
+                        notifyChange(label, "Voice Mode", value);
+                    }}
+                >
                     <div className="flex gap-6">
                         <Tooltip title="Polyphonic" placement="top">
                             <FormControlLabel

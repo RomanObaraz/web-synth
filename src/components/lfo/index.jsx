@@ -15,19 +15,26 @@ import { KnobFrequency } from "../knobs/KnobFrequency";
 import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
+import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
 
-export default function LFO({ moduleId }) {
+export default function LFO({ moduleId, label }) {
     const [waveform, setWaveform] = useState("sine");
     const [lfoMode, setLfoMode] = useState("vibrato");
 
     const rateParams = knobMap[moduleId].rate;
-    const { value: rate, setValue: setRate } = useKnob(rateParams);
+    const { value: rate, setValue: setRate } = useKnob(rateParams, label, "Rate");
 
     const depthParams = knobMap[moduleId].depth;
     const [depthRange, setDepthRange] = useState(depthParams.vibrato);
-    const { value: depth, setValue: setDepth } = useKnob(depthRange, lfoMode === "wah");
+    const { value: depth, setValue: setDepth } = useKnob(
+        depthRange,
+        label,
+        "Depth",
+        lfoMode === "wah"
+    );
 
     const { synth } = useSynth();
+    const notifyChange = useParamDisplayStore((state) => state.notifyChange);
 
     const depthFromPreset = useRef(null); // hack for proper setDepth on preset load
 
@@ -47,6 +54,7 @@ export default function LFO({ moduleId }) {
         if (depthParams[mode]) {
             setLfoMode(mode);
             setDepthRange(depthParams[mode]);
+            notifyChange(label, "Mode", lfoMode);
         }
     };
 
@@ -88,7 +96,11 @@ export default function LFO({ moduleId }) {
                         labelId="wave-lfo-label"
                         label="Wave"
                         value={waveform}
-                        onChange={(e) => setWaveform(e.target.value)}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setWaveform(value);
+                            notifyChange(label, "Wave", value);
+                        }}
                     >
                         <MenuItem value="sine">Sine</MenuItem>
                         <MenuItem value="square">Square</MenuItem>

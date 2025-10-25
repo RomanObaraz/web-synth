@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { alpha, Card, useTheme } from "@mui/material";
+import { ParameterDisplay } from "./ParameterDisplay";
 
 export const Oscilloscope = () => {
     const canvasRef = useRef(null);
@@ -136,6 +137,7 @@ export const Oscilloscope = () => {
     return (
         <Card className="w-full h-full" variant="outlined">
             <canvas ref={canvasRef} className="w-full h-full" />
+            <ParameterDisplay />
         </Card>
     );
 };

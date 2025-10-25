@@ -6,12 +6,17 @@ import { KnobLinear } from "../knobs/KnobLinear";
 import { KnobFrequency } from "../knobs/KnobFrequency";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
 
-export const Bitcrusher = ({ moduleId }) => {
+export const Bitcrusher = ({ moduleId, label }) => {
     const bitDepthParams = knobMap[moduleId].bitDepth;
-    const { value: bitDepth, setValue: setBitDepth } = useKnob(bitDepthParams);
+    const { value: bitDepth, setValue: setBitDepth } = useKnob(bitDepthParams, label, "Bit Depth");
 
     const sampleRateParams = knobMap[moduleId].sampleRate;
-    const { value: sampleRate, setValue: setSampleRate } = useKnob(sampleRateParams, true);
+    const { value: sampleRate, setValue: setSampleRate } = useKnob(
+        sampleRateParams,
+        label,
+        "Sample Rate",
+        true
+    );
 
     const { synth } = useSynth();
 

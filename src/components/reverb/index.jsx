@@ -5,9 +5,9 @@ import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
 
-export const Reverb = ({ moduleId }) => {
+export const Reverb = ({ moduleId, label }) => {
     const mixParams = knobMap[moduleId].mix;
-    const { value: mix, setValue: setMix } = useKnob(mixParams);
+    const { value: mix, setValue: setMix } = useKnob(mixParams, label, "Mix");
 
     const { synth } = useSynth();
 

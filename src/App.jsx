@@ -26,51 +26,51 @@ function App() {
 
             <div className="grid grid-cols-4 grid-flow-row gap-2">
                 <div>
-                    <Toggleable label="OSC-1">
-                        <Oscillator id={0} moduleId="osc-0" />
+                    <Toggleable>
+                        <Oscillator id={0} moduleId="osc-0" label="OSC-1" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="OSC-2">
-                        <Oscillator id={1} moduleId="osc-1" />
+                    <Toggleable>
+                        <Oscillator id={1} moduleId="osc-1" label="OSC-2" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="Sub-OSC">
-                        <SubOscillator id={0} moduleId="subOsc-0" />
+                    <Toggleable>
+                        <SubOscillator id={0} moduleId="subOsc-0" label="Sub-OSC" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="LFO">
-                        <LFO moduleId="lfo" />
+                    <Toggleable>
+                        <LFO moduleId="lfo" label="LFO" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="Amp Envelope">
-                        <AmpEnvelope moduleId="ampEnvelope" />
+                    <Toggleable>
+                        <AmpEnvelope moduleId="ampEnvelope" label="Amp Envelope" />
                     </Toggleable>
                 </div>
                 <div className="col-span-2">
                     <Oscilloscope />
                 </div>
                 <div className="row-span-2">
-                    <Toggleable label="LPF">
-                        <LowPassFilter moduleId="lpf" />
+                    <Toggleable>
+                        <LowPassFilter moduleId="lpf" label="LPF" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="Distortion">
-                        <Distortion moduleId="distortion" />
+                    <Toggleable>
+                        <Distortion moduleId="distortion" label="Distortion" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="Bitcrusher">
-                        <Bitcrusher moduleId="bitcrusher" />
+                    <Toggleable>
+                        <Bitcrusher moduleId="bitcrusher" label="Bitcrusher" />
                     </Toggleable>
                 </div>
                 <div>
-                    <Toggleable label="Reverb">
-                        <Reverb moduleId="reverb" />
+                    <Toggleable>
+                        <Reverb moduleId="reverb" label="Reverb" />
                     </Toggleable>
                 </div>
             </div>

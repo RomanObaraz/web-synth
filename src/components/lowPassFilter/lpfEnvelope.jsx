@@ -4,8 +4,9 @@ import { KnobTime } from "../knobs/KnobTime";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
+import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
 
-export const LpfEnvelope = ({ moduleId }) => {
+export const LpfEnvelope = ({ moduleId, label }) => {
     const attackDefault = knobMap[moduleId].attack.default;
     const [attack, setAttack] = useState(attackDefault);
 
@@ -19,6 +20,7 @@ export const LpfEnvelope = ({ moduleId }) => {
     const [release, setRelease] = useState(releaseDefault);
 
     const { synth } = useSynth();
+    const notifyChange = useParamDisplayStore((state) => state.notifyChange);
 
     usePresetBridge(
         "lpf-envelope",
@@ -54,27 +56,39 @@ export const LpfEnvelope = ({ moduleId }) => {
                 variant="warning"
                 label="Attack"
                 value={attack}
-                onValueChange={(v) => setAttack(v)}
+                onValueChange={(v) => {
+                    setAttack(v);
+                    notifyChange(label, "Attack", Number(v.toFixed(2)));
+                }}
             />
             <KnobTime
                 variant="warning"
                 label="Decay"
                 value={decay}
-                onValueChange={(v) => setDecay(v)}
+                onValueChange={(v) => {
+                    setDecay(v);
+                    notifyChange(label, "Decay", Number(v.toFixed(2)));
+                }}
             />
             <KnobLinear
                 variant="warning"
                 label="Sustain"
                 value={sustain}
                 valueDefault={sustainDefault}
-                onValueChange={(v) => setSustain(v)}
+                onValueChange={(v) => {
+                    setSustain(v);
+                    notifyChange(label, "Sustain", Number(v.toFixed(2)));
+                }}
             />
             <KnobTime
                 variant="warning"
                 label="Release"
                 value={release}
                 valueDefault={releaseDefault}
-                onValueChange={(v) => setRelease(v)}
+                onValueChange={(v) => {
+                    setRelease(v);
+                    notifyChange(label, "Release", Number(v.toFixed(2)));
+                }}
             />
         </div>
     );

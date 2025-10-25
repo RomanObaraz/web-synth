@@ -6,18 +6,24 @@ import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";
 import { useKnob } from "../../hooks/useKnob";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
+import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
 
-export const LowPassFilter = ({ moduleId }) => {
+export const LowPassFilter = ({ moduleId, label }) => {
     const cutoffParams = knobMap[moduleId].cutoff;
-    const { value: cutoff, setValue: setCutoff } = useKnob(cutoffParams, true);
+    const { value: cutoff, setValue: setCutoff } = useKnob(cutoffParams, label, "Cutoff", true);
 
     const resonanceParams = knobMap[moduleId].resonance;
-    const { value: resonance, setValue: setResonance } = useKnob(resonanceParams);
+    const { value: resonance, setValue: setResonance } = useKnob(
+        resonanceParams,
+        label,
+        "Resonance"
+    );
 
     const envDepthParams = knobMap[moduleId].envDepth;
     const [envDepth, setEnvDepth] = useState(envDepthParams.default);
 
     const { synth } = useSynth();
+    const notifyChange = useParamDisplayStore((state) => state.notifyChange);
 
     usePresetBridge(
         moduleId,
@@ -64,10 +70,13 @@ export const LowPassFilter = ({ moduleId }) => {
                 valueMin={envDepthParams.min}
                 valueMax={envDepthParams.max}
                 valueDisplayUnit=" Hz"
-                onValueChange={(v) => setEnvDepth(v)}
+                onValueChange={(v) => {
+                    setEnvDepth(v);
+                    notifyChange(label, "Env Depth", Math.round(v));
+                }}
             />
 
-            <LpfEnvelope moduleId={moduleId} />
+            <LpfEnvelope moduleId={moduleId} label={label} />
         </div>
     );
 };
