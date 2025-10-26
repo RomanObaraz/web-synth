@@ -9,7 +9,7 @@ export const ParameterDisplay = () => {
     const bgColor = useMemo(() => theme.palette.warning.main, [theme]);
 
     return (
-        <div className="pointer-events-none">
+        <>
             {current && (
                 <div
                     style={{ backgroundColor: bgColor }}
@@ -20,6 +20,6 @@ export const ParameterDisplay = () => {
                     <span className="min-w-12">{current.value}</span>
                 </div>
             )}
-        </div>
+        </>
     );
 };
