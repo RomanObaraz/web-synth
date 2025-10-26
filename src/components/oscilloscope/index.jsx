@@ -2,13 +2,14 @@ import { useEffect, useMemo, useRef } from "react";
 import { useSynth } from "../../hooks/useSynth";
 import { alpha, Card, useTheme } from "@mui/material";
 import { ParameterDisplay } from "./ParameterDisplay";
+import { VolumeBar } from "./VolumeBar";
 
 export const Oscilloscope = () => {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
+    const volumeRef = useRef(0);
     const { synth } = useSynth();
     const theme = useTheme();
-
     const waveColor = useMemo(() => theme.palette.warning.main, [theme]);
 
     useEffect(() => {
@@ -103,12 +104,18 @@ export const Oscilloscope = () => {
             animationRef.current = requestAnimationFrame(draw);
             synth.analyser.getFloatTimeDomainData(dataArray);
 
+            // compute volume (or loudness)
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                sum += dataArray[i] * dataArray[i];
+            }
+            volumeRef.current = Math.sqrt(sum / bufferLength);
+
+            // draw oscilloscope
             ctx.fillStyle = "rgba(0,0,0,0.25)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.globalCompositeOperation = "lighter";
             drawWave(ctx);
-
             ctx.globalCompositeOperation = "source-over";
             drawGrid(ctx);
         };
@@ -139,6 +146,9 @@ export const Oscilloscope = () => {
             <canvas ref={canvasRef} className="w-full h-full" />
             <div className="absolute left-0 bottom-0">
                 <ParameterDisplay />
+            </div>
+            <div className="absolute right-0 bottom-0">
+                <VolumeBar volumeRef={volumeRef} />
             </div>
         </Card>
     );
