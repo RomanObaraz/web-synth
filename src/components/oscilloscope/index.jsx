@@ -135,9 +135,11 @@ export const Oscilloscope = () => {
     }, []);
 
     return (
-        <Card className="w-full h-full" variant="outlined">
+        <Card className="flex relative w-full h-full" variant="outlined">
             <canvas ref={canvasRef} className="w-full h-full" />
-            <ParameterDisplay />
+            <div className="absolute left-0 bottom-0">
+                <ParameterDisplay />
+            </div>
         </Card>
     );
 };

@@ -1,21 +1,23 @@
+import { useTheme } from "@emotion/react";
 import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
+import { useMemo } from "react";
 
 export const ParameterDisplay = () => {
     const current = useParamDisplayStore((state) => state.current);
+    const theme = useTheme();
+
+    const bgColor = useMemo(() => theme.palette.warning.main, [theme]);
 
     return (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 pointer-events-none z-50">
+        <div className="pointer-events-none">
             {current && (
                 <div
-                    key={current.timestamp}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-black/80 text-white px-4 py-2 rounded-xl text-sm font-mono shadow-lg"
+                    style={{ backgroundColor: bgColor }}
+                    className="flex text-black px-4 py-2 font-black text-xl rounded-sm tracking-wider"
                 >
                     {current.moduleLabel}
-                    {current.paramLabel ? ` - ${current.paramLabel}` : ""}: {current.value}
+                    {current.paramLabel ? ` - ${current.paramLabel}` : ""}:&nbsp;
+                    <span className="min-w-12">{current.value}</span>
                 </div>
             )}
         </div>
