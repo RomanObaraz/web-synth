@@ -1,10 +1,7 @@
-import { useTheme } from "@emotion/react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-export const VolumeBar = ({ volumeRef }) => {
+export const VolumeBar = ({ volumeRef, mainColor }) => {
     const barRef = useRef(null);
-    const theme = useTheme();
-    const mainColor = useMemo(() => theme.palette.warning.main, [theme]);
 
     useEffect(() => {
         let anim;
@@ -23,16 +20,16 @@ export const VolumeBar = ({ volumeRef }) => {
     }, [volumeRef]);
 
     return (
-        <>
+        <div className="w-6">
             <div
                 style={{ backgroundColor: mainColor }}
-                className="w-6 rounded-sm mb-2 text-black font-black text-xl"
+                className="rounded-sm mb-2 text-black font-black text-xl"
             >
                 V
             </div>
             <div
                 style={{ borderColor: mainColor }}
-                className="flex items-end w-6 h-72 p-1 bg-black border-2 rounded-sm"
+                className="flex items-end h-72 p-1 bg-black border-2 rounded-sm"
             >
                 <div
                     ref={barRef}
@@ -40,6 +37,6 @@ export const VolumeBar = ({ volumeRef }) => {
                     className="w-full h-full origin-bottom rounded-xs transition-transform duration-50"
                 />
             </div>
-        </>
+        </div>
     );
 };

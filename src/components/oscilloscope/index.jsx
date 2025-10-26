@@ -10,7 +10,7 @@ export const Oscilloscope = () => {
     const volumeRef = useRef(0);
     const { synth } = useSynth();
     const theme = useTheme();
-    const waveColor = useMemo(() => theme.palette.warning.main, [theme]);
+    const mainColor = useMemo(() => theme.palette.warning.main, [theme]);
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -25,7 +25,7 @@ export const Oscilloscope = () => {
         const dataArray = new Float32Array(bufferLength);
 
         const drawGrid = (ctx) => {
-            ctx.strokeStyle = alpha(waveColor, 0.1);
+            ctx.strokeStyle = alpha(mainColor, 0.1);
             ctx.lineWidth = 1;
             const step = 50;
 
@@ -63,8 +63,8 @@ export const Oscilloscope = () => {
 
         const drawWave = (ctx) => {
             ctx.lineWidth = 3;
-            ctx.strokeStyle = waveColor;
-            ctx.shadowColor = alpha(waveColor, 0.8);
+            ctx.strokeStyle = mainColor;
+            ctx.shadowColor = alpha(mainColor, 0.8);
             ctx.shadowBlur = 15;
             ctx.lineCap = "round";
 
@@ -125,7 +125,7 @@ export const Oscilloscope = () => {
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
         };
-    }, [synth, waveColor]);
+    }, [synth, mainColor]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -145,10 +145,10 @@ export const Oscilloscope = () => {
         <Card className="flex relative w-full h-full" variant="outlined">
             <canvas ref={canvasRef} className="w-full h-full" />
             <div className="absolute left-0 bottom-0">
-                <ParameterDisplay />
+                <ParameterDisplay mainColor={mainColor} />
             </div>
             <div className="absolute right-0 bottom-0">
-                <VolumeBar volumeRef={volumeRef} />
+                <VolumeBar volumeRef={volumeRef} mainColor={mainColor} />
             </div>
         </Card>
     );
