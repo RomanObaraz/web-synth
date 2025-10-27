@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+
 import { useMIDIStore } from "../stores/useMIDIStore";
 
 export const useMIDIKeyboard = ({ onKeyDown, onKeyUp }) => {

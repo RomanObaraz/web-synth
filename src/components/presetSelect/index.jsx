@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { usePresetStore } from "../../stores/usePresetStore";
 import { Autocomplete, IconButton, TextField } from "@mui/material";
 import { Delete, Save } from "@mui/icons-material";
+
+import { usePresetStore } from "../../stores/usePresetStore";
 
 export const PresetSelect = () => {
     const { presets, savePreset, loadPreset, deletePreset } = usePresetStore();

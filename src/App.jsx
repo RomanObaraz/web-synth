@@ -6,7 +6,7 @@ import { Reverb } from "./components/reverb";
 import { Toggleable } from "./components/toggleable";
 import { Distortion } from "./components/distortion";
 import { AmpEnvelope } from "./components/ampEnvelope";
-import LFO from "./components/lfo";
+import { LFO } from "./components/lfo";
 import { SubOscillator } from "./components/oscillator/subOscillator";
 import { useMIDIManager } from "./hooks/useMIDIManager";
 import { InputController } from "./components/InputController";

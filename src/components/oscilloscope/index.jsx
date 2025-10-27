@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useSynth } from "../../hooks/useSynth";
 import { alpha, Card, useTheme } from "@mui/material";
+
+import { useSynth } from "../../hooks/useSynth";
 import { ParameterDisplay } from "./ParameterDisplay";
 import { VolumeBar } from "./VolumeBar";
 

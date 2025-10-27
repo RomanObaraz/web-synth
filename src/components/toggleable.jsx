@@ -1,7 +1,8 @@
 import { Card, CardContent, Checkbox, Typography } from "@mui/material";
 import { useEffect } from "react";
-import { useSynth } from "../hooks/useSynth";
 import { CheckBoxOutlineBlank, SquareRounded } from "@mui/icons-material";
+
+import { useSynth } from "../hooks/useSynth";
 import { useToggleStore } from "../stores/useToggleStore";
 import { useParamDisplayStore } from "../stores/useParamDisplayStore";
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { useKnob } from "../../hooks/useKnob";

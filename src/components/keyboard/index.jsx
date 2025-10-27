@@ -1,7 +1,8 @@
+import { Button } from "@mui/material";
+
 import { useNoteController } from "../../hooks/useNoteController";
 import { useVoiceStore } from "../../stores/useVoiceStore";
 import { keyMidiMap } from "../../utils/keyboardMap";
-import { Button } from "@mui/material";
 
 export const Keyboard = () => {
     const { handleKeyDown, handleKeyUp } = useNoteController();

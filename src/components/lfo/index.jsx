@@ -9,6 +9,7 @@ import {
     Tooltip,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+
 import { useSynth } from "../../hooks/useSynth";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { KnobFrequency } from "../knobs/KnobFrequency";
@@ -17,7 +18,7 @@ import { useKnob } from "../../hooks/useKnob";
 import { usePresetBridge } from "../../hooks/usePresetBridge";
 import { useParamDisplayStore } from "../../stores/useParamDisplayStore";
 
-export default function LFO({ moduleId, label }) {
+export const LFO = ({ moduleId, label }) => {
     const [waveform, setWaveform] = useState("sine");
     const [lfoMode, setLfoMode] = useState("vibrato");
 
@@ -180,4 +181,4 @@ export default function LFO({ moduleId, label }) {
             </FormControl>
         </div>
     );
-}
+};

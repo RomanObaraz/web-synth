@@ -1,6 +1,7 @@
+import { useCallback, useMemo } from "react";
+
 import { KnobBase } from "./KnobBase";
 import { NormalisableRange } from "../../utils/math";
-import { useCallback, useMemo } from "react";
 
 export const KnobTime = ({
     variant,

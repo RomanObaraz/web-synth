@@ -1,8 +1,9 @@
 import { useId } from "react";
 import { KnobHeadless, KnobHeadlessLabel, KnobHeadlessOutput } from "react-knob-headless";
+import { styled } from "@mui/material";
+
 import { KnobBaseThumb } from "./KnobBaseThumb";
 import { mapFrom01Linear, mapTo01Linear } from "../../utils/math";
-import { styled } from "@mui/material";
 
 const StyledKnobBase = styled("div", {
     name: "KnobBase",

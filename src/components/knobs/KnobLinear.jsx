@@ -1,5 +1,6 @@
-import { KnobBase } from "./KnobBase";
 import { useCallback } from "react";
+
+import { KnobBase } from "./KnobBase";
 
 export const KnobLinear = ({
     variant,
