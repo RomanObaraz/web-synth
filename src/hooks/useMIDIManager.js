@@ -5,6 +5,7 @@ import { useToggleStore } from "../stores/useToggleStore";
 import { padMap } from "../utils/padMap";
 
 // ! NOTE: use it only once in App
+// ! NOTE: this (also knobMap.js and padMap.js) was made for my own MIDI keyboard (Arturia Minilab MKII) and will have issues with other MIDI devices
 
 export function useMIDIManager() {
     useEffect(() => {
