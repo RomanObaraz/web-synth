@@ -1,3 +1,4 @@
+import { alpha } from "@mui/material";
 import { useEffect, useRef } from "react";
 
 export const VolumeBar = ({ volumeRef, mainColor }) => {
@@ -22,13 +23,13 @@ export const VolumeBar = ({ volumeRef, mainColor }) => {
     return (
         <div className="w-6">
             <div
-                style={{ backgroundColor: mainColor }}
+                style={{ backgroundColor: alpha(mainColor, 0.7) }}
                 className="rounded-sm mb-2 text-black font-black text-xl"
             >
                 V
             </div>
             <div
-                style={{ borderColor: mainColor }}
+                style={{ borderColor: alpha(mainColor, 0.7) }}
                 className="flex items-end h-72 p-1 bg-black border-2 rounded-sm"
             >
                 <div
