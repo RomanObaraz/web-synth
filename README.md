@@ -1,4 +1,4 @@
-# The Synth
+# Web Synth
 
 Pretty simple analog-like synth with sound wave visualization, made with WebAudio API and React.
 
