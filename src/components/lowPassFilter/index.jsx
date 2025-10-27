@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useSynth } from "../../hooks/useSynth";
-import { LpfEnvelope } from "./lpfEnvelope";
+import { LpfEnvelope } from "./LpfEnvelope";
 import { KnobFrequency } from "../knobs/KnobFrequency";
 import { KnobLinear } from "../knobs/KnobLinear";
 import { knobMap } from "../../utils/knobMap";

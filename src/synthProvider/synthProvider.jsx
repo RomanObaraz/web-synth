@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { SynthEngine } from "../synth/SynthEngine";
-import { SynthContext } from "./synthContext";
+import { SynthContext } from "./SynthContext";
 import { useMIDIStore } from "../stores/useMIDIStore";
 import { knobMap } from "../utils/knobMap";
 

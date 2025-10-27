@@ -4,7 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import App from "./App.jsx";
 import { theme } from "./Theme.js";
-import { SynthProvider } from "./synthProvider/synthProvider.jsx";
+import { SynthProvider } from "./synthProvider/SynthProvider.jsx";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")).render(
