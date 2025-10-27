@@ -12,6 +12,7 @@ import { useMIDIManager } from "./hooks/useMIDIManager";
 import { InputController } from "./components/InputController";
 import { Bitcrusher } from "./components/bitcrusher";
 import { PresetSelect } from "./components/presetSelect";
+import { Footer } from "./components/footer";
 
 function App() {
     useMIDIManager();
@@ -75,8 +76,11 @@ function App() {
                 </div>
             </div>
 
-            <div className="mt-2">
+            <div className="flex relative justify-center mt-2">
                 <Keyboard />
+                <div className="absolute right-0">
+                    <Footer />
+                </div>
             </div>
         </>
     );
