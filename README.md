@@ -1,3 +1,5 @@
 # The Synth
 
-Pretty simple analog-like synth made with WebAudio API and React.
+Pretty simple analog-like synth with sound wave visualization, made with WebAudio API and React.
+
+![Preview](./public/preview.png)
